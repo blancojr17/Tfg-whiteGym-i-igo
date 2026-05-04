@@ -1,0 +1,83 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.pagina-acceso {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+}
+
+.contenedor-acceso {
+    width: 100%;
+    max-width: 360px;
+    padding: 30px;
+    background-color: #1e1e1e;
+    border: 1px solid #c76719;
+    border-radius: 8px;
+    color: #fff;
+}
+
+.contenedor-acceso h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+.formulario-acceso {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.formulario-acceso input,
+.formulario-acceso select {
+    padding: 10px;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #fff;
+}
+
+.formulario-acceso button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #c76719;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.enlace-acceso {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.enlace-acceso a {
+    color: #c76719;
+    text-decoration: none;
+}
+
+
+/*logo*/
+.logo-acceso {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.logo-acceso img {
+    width: 70px;
+    transition: transform 0.2s ease;
+}
+
+.logo-acceso img:hover {
+    transform: scale(1.1);
+}
