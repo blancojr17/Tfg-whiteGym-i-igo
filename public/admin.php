@@ -1,8 +1,8 @@
-<?php
+﻿<?php
 session_start();
 
 if (!isset($_SESSION["email"]) || $_SESSION["rol"] !== "admin") {
-    header("Location: /WHITEGYM/php/login.php");
+    header("Location: login.php");
     exit;
 }
 ?>
@@ -12,7 +12,7 @@ if (!isset($_SESSION["email"]) || $_SESSION["rol"] !== "admin") {
 <head>
     <meta charset="UTF-8">
     <title>Panel Admin - WhiteGym</title>
-    <link rel="stylesheet" href="../admin.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
 </head>
 <body>
 
@@ -20,7 +20,7 @@ if (!isset($_SESSION["email"]) || $_SESSION["rol"] !== "admin") {
     <h1>Panel de Administración</h1>
     <div id="usuario-admin">
         <span><?php echo $_SESSION["email"]; ?></span>
-        <a href="logout.php" id="btn-cerrar-sesion">Cerrar sesión</a>
+        <a href="../app/controllers/logout.php" id="btn-cerrar-sesion">Cerrar sesión</a>
     </div>
 </header>
 
@@ -64,12 +64,10 @@ if (!isset($_SESSION["email"]) || $_SESSION["rol"] !== "admin") {
         </table>
     </section>
 
-
     <section id="seccion-clases">
         <h2>Clases</h2>
 
         <div id="grid-clases">
-
             <div class="tarjeta-clase">
                 <h3>Yoga</h3>
                 <p>Con Manuel Castro</p>
@@ -102,7 +100,6 @@ if (!isset($_SESSION["email"]) || $_SESSION["rol"] !== "admin") {
                     <button class="btn-eliminar">Eliminar</button>
                 </div>
             </div>
-
         </div>
     </section>
 
