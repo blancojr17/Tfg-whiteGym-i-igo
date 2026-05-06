@@ -10,7 +10,7 @@ if (!isset($_SESSION["id_usuario"]) || $_SESSION["rol"] !== "usuario") {
 $planes = [];
 $error_planes = false;
 
-$sql = "SELECT * FROM planes";
+$sql = "SELECT * FROM planes WHERE activo = 1";
 $resultado = $conexion->query($sql);
 
 if ($resultado) {
