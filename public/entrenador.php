@@ -42,8 +42,14 @@ if ($stmt) {
 $mensaje_exito = "";
 $mensaje_error = "";
 
-if (isset($_GET["ok"]) && $_GET["ok"] === "creada") {
-    $mensaje_exito = "Clase creada correctamente.";
+if (isset($_GET["ok"])) {
+    if ($_GET["ok"] === "creada") {
+        $mensaje_exito = "Clase creada correctamente.";
+    } elseif ($_GET["ok"] === "actualizada") {
+        $mensaje_exito = "Clase actualizada correctamente.";
+    } elseif ($_GET["ok"] === "eliminada") {
+        $mensaje_exito = "Clase eliminada correctamente.";
+    }
 }
 
 if (isset($_GET["error"])) {
@@ -57,19 +63,26 @@ if (isset($_GET["error"])) {
         $mensaje_error = "La fecha es obligatoria.";
     } elseif ($tipo_error === "capacidad") {
         $mensaje_error = "La capacidad debe ser mayor que 0.";
+    } elseif ($tipo_error === "permiso") {
+        $mensaje_error = "No tienes permiso para modificar esa clase.";
+    } elseif ($tipo_error === "clase") {
+        $mensaje_error = "La clase no existe.";
     } else {
-        $mensaje_error = "No se pudo crear la clase.";
+        $mensaje_error = "No se pudo completar la operación.";
     }
 }
 
-// Base preparada para futuras ampliaciones: edición, cancelación, límites, calendario y estadísticas.
+// Base preparada para futuras ampliaciones: cancelación sin borrar, recurrentes, calendario, estadísticas e imágenes.
 $panel_clases_futuro = [
     "puede_crear" => true,
-    "puede_editar" => false,
-    "puede_cancelar" => false,
+    "puede_editar" => true,
+    "puede_cancelar" => true,
+    "cancelacion_logica" => false,
+    "clases_recurrentes" => false,
     "limite_reservas" => null,
     "modo_calendario" => false,
-    "modo_estadisticas" => false
+    "modo_estadisticas" => false,
+    "imagenes_clases" => false
 ];
 ?>
 
@@ -132,6 +145,15 @@ $panel_clases_futuro = [
             <p><strong>Fecha:</strong> <?php echo htmlspecialchars($clase["fecha"] ?? ""); ?></p>
             <p><strong>Capacidad:</strong> <?php echo (int) ($clase["capacidad"] ?? 0); ?></p>
             <p><strong>Usuarios apuntados:</strong> <?php echo (int) ($clase["total_asistentes"] ?? 0); ?></p>
+
+            <p>
+                <a href="editar_clase.php?id_clase=<?php echo (int) ($clase["id_clase"] ?? 0); ?>">Editar</a>
+            </p>
+
+            <form action="../app/controllers/eliminar_clase.php" method="POST">
+                <input type="hidden" name="id_clase" value="<?php echo (int) ($clase["id_clase"] ?? 0); ?>">
+                <button type="submit">Cancelar/Eliminar clase</button>
+            </form>
         </article>
         <hr>
     <?php endforeach; ?>
