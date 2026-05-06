@@ -15,9 +15,7 @@ if ($email === "" || $password === "" || !filter_var($email, FILTER_VALIDATE_EMA
     exit;
 }
 
-$sql = "select id, nombre, email, password, rol, activo
-        from usuarios
-        where email = ?";
+$sql = "select id_usuario, nombre, email, password, rol, activo from usuarios where email = ?";
 
 $stmt = $conexion->prepare($sql);
 
@@ -36,7 +34,7 @@ if ($resultado && $resultado->num_rows === 1) {
     if ($fila["activo"] == 1 && password_verify($password, $fila["password"])) {
         session_regenerate_id(true);
 
-        $_SESSION["id_usuario"] = $fila["id"];
+        $_SESSION["id_usuario"] = $fila["id_usuario"];
         $_SESSION["nombre"] = $fila["nombre"];
         $_SESSION["email"] = $fila["email"];
         $_SESSION["rol"] = $fila["rol"];
