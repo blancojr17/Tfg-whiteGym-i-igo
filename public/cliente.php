@@ -10,7 +10,7 @@ if (!isset($_SESSION["id_usuario"]) || !isset($_SESSION["email"]) || $_SESSION["
 $id_usuario = (int) $_SESSION["id_usuario"];
 $plan_activo = null;
 
-$sql = "SELECT p.nombre, p.tipo, up.fecha_fin, up.usos_restantes
+$sql = "SELECT up.id_usuario_plan, up.id_plan, p.nombre, p.tipo, up.fecha_fin, up.usos_restantes
         FROM usuarios_planes up
         INNER JOIN planes p ON up.id_plan = p.id_plan
         WHERE up.id_usuario = ?
@@ -31,6 +31,32 @@ if ($stmt) {
     $plan_activo = $resultado ? $resultado->fetch_assoc() : null;
     $stmt->close();
 }
+
+$mensaje_exito = "";
+$mensaje_error = "";
+
+if (isset($_GET["asistencia_ok"]) && $_GET["asistencia_ok"] === "1") {
+    $mensaje_exito = "Asistencia registrada correctamente.";
+}
+
+if (isset($_GET["asistencia_error"])) {
+    $tipo_error = $_GET["asistencia_error"];
+
+    if ($tipo_error === "sin_plan") {
+        $mensaje_error = "No tienes ningún plan activo para registrar entrada.";
+    } elseif ($tipo_error === "duplicada") {
+        $mensaje_error = "Ya has registrado tu asistencia hoy.";
+    } else {
+        $mensaje_error = "No se pudo registrar la asistencia. Inténtalo de nuevo.";
+    }
+}
+
+// Base preparada para futuras ampliaciones: racha, historial y calendario.
+$asistencia_resumen = [
+    "racha_actual" => null,
+    "total_visitas" => null,
+    "ultimas_visitas" => []
+];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -68,7 +94,24 @@ if ($stmt) {
         <?php endif; ?>
     </section>
 
+    <section>
+        <h3>Asistencia</h3>
+
+        <?php if ($mensaje_exito !== ""): ?>
+            <p><?php echo htmlspecialchars($mensaje_exito); ?></p>
+        <?php endif; ?>
+
+        <?php if ($mensaje_error !== ""): ?>
+            <p><?php echo htmlspecialchars($mensaje_error); ?></p>
+        <?php endif; ?>
+
+        <form action="../app/controllers/registrar_asistencia.php" method="POST">
+            <button type="submit">Registrar entrada</button>
+        </form>
+    </section>
+
     <p><a href="planes.php">Ver planes disponibles</a></p>
+    <p><a href="clases.php">Ver clases disponibles</a></p>
 </main>
 
 </body>
