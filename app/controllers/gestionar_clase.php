@@ -2,13 +2,16 @@
 session_start();
 require_once __DIR__ . "/../../config/conexion.php";
 
+$origen = $_POST["origen"] ?? "clases.php";
+$origen_permitido = in_array($origen, ["clases.php", "mis_clases.php"], true) ? $origen : "clases.php";
+
 if (!isset($_SESSION["id_usuario"]) || $_SESSION["rol"] !== "usuario") {
     header("Location: ../../public/login.php");
     exit;
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: ../../public/clases.php?error=metodo");
+    header("Location: ../../public/" . $origen_permitido . "?error=metodo");
     exit;
 }
 
@@ -17,7 +20,7 @@ $id_clase = (int) ($_POST["id_clase"] ?? 0);
 $accion = $_POST["accion"] ?? "";
 
 if ($id_clase <= 0 || ($accion !== "apuntar" && $accion !== "desapuntar")) {
-    header("Location: ../../public/clases.php?error=datos");
+    header("Location: ../../public/" . $origen_permitido . "?error=datos");
     exit;
 }
 
@@ -39,7 +42,7 @@ try {
 
     if (!$clase) {
         $conexion->rollback();
-        header("Location: ../../public/clases.php?error=clase");
+        header("Location: ../../public/" . $origen_permitido . "?error=clase");
         exit;
     }
 
@@ -62,7 +65,7 @@ try {
     if ($accion === "apuntar") {
         if ($yaApuntado) {
             $conexion->rollback();
-            header("Location: ../../public/clases.php?error=duplicado");
+            header("Location: ../../public/" . $origen_permitido . "?error=duplicado");
             exit;
         }
 
@@ -86,7 +89,7 @@ try {
 
         if ($ocupadas >= $capacidad) {
             $conexion->rollback();
-            header("Location: ../../public/clases.php?error=llena");
+            header("Location: ../../public/" . $origen_permitido . "?error=llena");
             exit;
         }
 
@@ -107,13 +110,13 @@ try {
         $stmtInsert->close();
 
         $conexion->commit();
-        header("Location: ../../public/clases.php?ok=apuntado");
+        header("Location: ../../public/" . $origen_permitido . "?ok=apuntado");
         exit;
     }
 
     if (!$yaApuntado) {
         $conexion->rollback();
-        header("Location: ../../public/clases.php?error=no_apuntado");
+        header("Location: ../../public/" . $origen_permitido . "?error=no_apuntado");
         exit;
     }
 
@@ -135,17 +138,17 @@ try {
     if ($stmtDelete->affected_rows !== 1) {
         $stmtDelete->close();
         $conexion->rollback();
-        header("Location: ../../public/clases.php?error=no_apuntado");
+        header("Location: ../../public/" . $origen_permitido . "?error=no_apuntado");
         exit;
     }
 
     $stmtDelete->close();
 
     $conexion->commit();
-    header("Location: ../../public/clases.php?ok=desapuntado");
+    header("Location: ../../public/" . $origen_permitido . "?ok=desapuntado");
     exit;
 } catch (Exception $e) {
     $conexion->rollback();
-    header("Location: ../../public/clases.php?error=1");
+    header("Location: ../../public/" . $origen_permitido . "?error=1");
     exit;
 }

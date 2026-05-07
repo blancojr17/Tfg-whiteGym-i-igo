@@ -46,39 +46,38 @@ if (!empty($clase["fecha"])) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Clase - WhiteGym</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar clase - WhiteGym</title>
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/entrenador.css">
 </head>
 <body>
 
-<h1>Editar clase</h1>
+<?php include __DIR__ . "/includes/topbar.php"; ?>
 
-<form action="../app/controllers/actualizar_clase.php" method="POST">
-    <input type="hidden" name="id_clase" value="<?php echo (int) $clase["id_clase"]; ?>">
+<div class="dashboard-layout">
+    <?php include __DIR__ . "/includes/sidebar_entrenador.php"; ?>
 
-    <p>
-        <label for="nombre">Nombre</label><br>
-        <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($clase["nombre"]); ?>" required>
-    </p>
+    <main class="dashboard-main">
+        <div class="page-header">
+            <h2>Editar clase</h2>
+        </div>
 
-    <p>
-        <label for="descripcion">Descripción</label><br>
-        <textarea id="descripcion" name="descripcion" rows="3" required><?php echo htmlspecialchars($clase["descripcion"]); ?></textarea>
-    </p>
-
-    <p>
-        <label for="fecha">Fecha</label><br>
-        <input type="datetime-local" id="fecha" name="fecha" value="<?php echo htmlspecialchars($fecha_form); ?>" required>
-    </p>
-
-    <p>
-        <label for="capacidad">Capacidad</label><br>
-        <input type="number" id="capacidad" name="capacidad" min="1" value="<?php echo (int) $clase["capacidad"]; ?>" required>
-    </p>
-
-    <button type="submit">Guardar cambios</button>
-</form>
-
-<p><a href="entrenador.php">Volver</a></p>
+        <section class="card">
+            <form action="../app/controllers/actualizar_clase.php" method="POST" class="inline">
+                <input type="hidden" name="id_clase" value="<?php echo (int) $clase["id_clase"]; ?>">
+                <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($clase["nombre"]); ?>" required>
+                <input type="text" id="descripcion" name="descripcion" value="<?php echo htmlspecialchars($clase["descripcion"]); ?>" required>
+                <input type="datetime-local" id="fecha" name="fecha" value="<?php echo htmlspecialchars($fecha_form); ?>" required>
+                <input type="number" id="capacidad" name="capacidad" min="1" value="<?php echo (int) $clase["capacidad"]; ?>" required>
+                <button type="submit">Guardar cambios</button>
+                <a href="entrenador.php">Volver</a>
+            </form>
+        </section>
+    </main>
+</div>
 
 </body>
 </html>

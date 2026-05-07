@@ -275,10 +275,12 @@ body {
     text-align: left;
     position: relative;
     border: 1px solid orange;
+    transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .tarjeta-clase:hover {
-    transform: scale(1.05);
+    transform: scale(1.015);
+    border-color: #c76719;
 }
 
 .nivel {

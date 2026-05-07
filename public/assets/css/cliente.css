@@ -1,46 +1,107 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+.card-kpi .metric-value {
+    color: var(--color-accent-soft);
 }
 
-body {
-    background: #000;
-    color: #fff;
+.class-card-meta {
+    display: grid;
+    gap: 8px;
+    margin: 14px 0 18px;
 }
 
-#cabecera-cliente {
-    background: #242423;
-    padding: 20px 30px;
+.class-card-meta p {
+    color: var(--text-muted);
+}
+
+.body-results {
+    margin-top: 24px;
+}
+
+.plans-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+}
+
+.plan-card {
     display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 28px 24px;
+    border-color: rgba(192, 88, 4, 0.22);
+    background: #1c1c1c;
+}
+
+.plan-card.featured {
+    background: #222;
+}
+
+.plan-card-header {
+    display: flex;
+    align-items: flex-start;
     justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #c05804;
+    gap: 12px;
+    margin-bottom: 18px;
 }
 
-#info-cliente {
+.plan-card-name {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.plan-card-type {
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+
+.plan-price {
+    margin: 10px 0 22px;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.plan-price span {
+    font-size: 0.92rem;
+    color: var(--text-subtle);
+    font-weight: 400;
+}
+
+.plan-benefits {
+    list-style: none;
+    display: grid;
+    gap: 12px;
+    padding: 18px 0;
+    margin: 0 0 24px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+
+.plan-benefits li {
+    color: var(--text-muted);
+}
+
+.plan-card-form {
+    margin-top: auto;
+}
+
+.plan-card-form button {
+    width: 100%;
+    min-height: 48px;
+}
+
+.current-plan-summary {
     display: flex;
-    gap: 20px;
-    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 24px;
 }
 
-#btn-cerrar-sesion {
-    background: #c05804;
-    color: #fff;
-    padding: 8px 16px;
-    text-decoration: none;
-    border-radius: 6px;
+.current-plan-summary p {
+    margin: 0;
 }
 
-#contenido-cliente {
-    max-width: 800px;
-    margin: 60px auto;
-    text-align: center;
+.body-submit {
+    align-items: end;
 }
 
-#contenido-cliente h2 {
-    color: #c05804;
-    margin-bottom: 15px;
+.body-submit button {
+    min-width: 220px;
 }
-

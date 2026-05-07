@@ -8,7 +8,7 @@ if (!isset($_SESSION["id_usuario"]) || $_SESSION["rol"] !== "admin") {
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_clases.php?error=1");
     exit;
 }
 
@@ -19,22 +19,22 @@ $fecha = trim($_POST["fecha"] ?? "");
 $capacidad = (int) ($_POST["capacidad"] ?? 0);
 
 if ($id_clase <= 0) {
-    header("Location: ../../public/admin.php?error=admin_clase_id");
+    header("Location: ../../public/admin_clases.php?error=admin_clase_id");
     exit;
 }
 
 if ($nombre === "") {
-    header("Location: ../../public/admin.php?error=admin_clase_nombre");
+    header("Location: ../../public/admin_clases.php?error=admin_clase_nombre");
     exit;
 }
 
 if ($fecha === "") {
-    header("Location: ../../public/admin.php?error=admin_clase_fecha");
+    header("Location: ../../public/admin_clases.php?error=admin_clase_fecha");
     exit;
 }
 
 if ($capacidad <= 0) {
-    header("Location: ../../public/admin.php?error=admin_clase_capacidad");
+    header("Location: ../../public/admin_clases.php?error=admin_clase_capacidad");
     exit;
 }
 
@@ -42,7 +42,7 @@ $sqlExiste = "SELECT id_clase FROM clases WHERE id_clase = ? LIMIT 1";
 $stmtExiste = $conexion->prepare($sqlExiste);
 
 if (!$stmtExiste) {
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_clases.php?error=1");
     exit;
 }
 
@@ -53,7 +53,7 @@ $existe = $resExiste && $resExiste->num_rows === 1;
 $stmtExiste->close();
 
 if (!$existe) {
-    header("Location: ../../public/admin.php?error=admin_clase_no_existe");
+    header("Location: ../../public/admin_clases.php?error=admin_clase_no_existe");
     exit;
 }
 
@@ -65,7 +65,7 @@ $sqlUpdate = "UPDATE clases
 $stmtUpdate = $conexion->prepare($sqlUpdate);
 
 if (!$stmtUpdate) {
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_clases.php?error=1");
     exit;
 }
 
@@ -73,10 +73,11 @@ $stmtUpdate->bind_param("sssii", $nombre, $descripcion, $fecha_sql, $capacidad, 
 
 if (!$stmtUpdate->execute()) {
     $stmtUpdate->close();
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_clases.php?error=1");
     exit;
 }
 
 $stmtUpdate->close();
-header("Location: ../../public/admin.php?ok=admin_clase_actualizada");
+header("Location: ../../public/admin_clases.php?ok=admin_clase_actualizada");
 exit;
+

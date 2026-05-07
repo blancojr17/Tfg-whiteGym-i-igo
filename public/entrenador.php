@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 require_once __DIR__ . "/../config/conexion.php";
 
@@ -10,6 +10,7 @@ if (!isset($_SESSION["id_usuario"]) || !isset($_SESSION["email"]) || $_SESSION["
 $id_entrenador = (int) $_SESSION["id_usuario"];
 $mis_clases = [];
 $error_clases = false;
+$total_asistentes = 0;
 
 $sql = "SELECT c.id_clase,
                c.nombre,
@@ -32,6 +33,7 @@ if ($stmt) {
 
     while ($fila = $resultado->fetch_assoc()) {
         $mis_clases[] = $fila;
+        $total_asistentes += (int) ($fila["total_asistentes"] ?? 0);
     }
 
     $stmt->close();
@@ -53,113 +55,139 @@ if (isset($_GET["ok"])) {
 }
 
 if (isset($_GET["error"])) {
-    $tipo_error = $_GET["error"];
-
-    if ($tipo_error === "nombre") {
-        $mensaje_error = "El nombre es obligatorio.";
-    } elseif ($tipo_error === "descripcion") {
-        $mensaje_error = "La descripción es obligatoria.";
-    } elseif ($tipo_error === "fecha") {
-        $mensaje_error = "La fecha es obligatoria.";
-    } elseif ($tipo_error === "capacidad") {
-        $mensaje_error = "La capacidad debe ser mayor que 0.";
-    } elseif ($tipo_error === "permiso") {
-        $mensaje_error = "No tienes permiso para modificar esa clase.";
-    } elseif ($tipo_error === "clase") {
-        $mensaje_error = "La clase no existe.";
-    } else {
-        $mensaje_error = "No se pudo completar la operación.";
-    }
+    $mensaje_error = "No se pudo completar la operacion.";
 }
-
-// Base preparada para futuras ampliaciones: cancelación sin borrar, recurrentes, calendario, estadísticas e imágenes.
-$panel_clases_futuro = [
-    "puede_crear" => true,
-    "puede_editar" => true,
-    "puede_cancelar" => true,
-    "cancelacion_logica" => false,
-    "clases_recurrentes" => false,
-    "limite_reservas" => null,
-    "modo_calendario" => false,
-    "modo_estadisticas" => false,
-    "imagenes_clases" => false
-];
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Área Entrenador</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel entrenador - WhiteGym</title>
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/entrenador.css">
 </head>
 <body>
 
-<h1>Área de Entrenador</h1>
-<p>Bienvenido <?php echo htmlspecialchars($_SESSION["nombre"]); ?></p>
+<?php include __DIR__ . "/includes/topbar.php"; ?>
 
-<h2>Crear nueva clase</h2>
+<div class="dashboard-layout">
+    <?php include __DIR__ . "/includes/sidebar_entrenador.php"; ?>
 
-<?php if ($mensaje_exito !== ""): ?>
-    <p><?php echo htmlspecialchars($mensaje_exito); ?></p>
-<?php endif; ?>
+    <main class="dashboard-main">
+        <div class="page-shell">
+            <div class="page-header">
+                <div>
+                    <h2>Clases</h2>
+                </div>
+            </div>
 
-<?php if ($mensaje_error !== ""): ?>
-    <p><?php echo htmlspecialchars($mensaje_error); ?></p>
-<?php endif; ?>
+            <?php if ($mensaje_exito !== ""): ?>
+                <p class="notice-ok"><?php echo htmlspecialchars($mensaje_exito); ?></p>
+            <?php endif; ?>
 
-<form action="../app/controllers/crear_clase.php" method="POST">
-    <p>
-        <label for="nombre">Nombre</label><br>
-        <input type="text" id="nombre" name="nombre" required>
-    </p>
+            <?php if ($mensaje_error !== ""): ?>
+                <p class="notice-error"><?php echo htmlspecialchars($mensaje_error); ?></p>
+            <?php endif; ?>
 
-    <p>
-        <label for="descripcion">Descripción</label><br>
-        <textarea id="descripcion" name="descripcion" rows="3" required></textarea>
-    </p>
+            <section class="stats-grid">
+                <article class="card card-kpi">
+                    <span class="eyebrow">Clases</span>
+                    <strong class="metric-value"><?php echo count($mis_clases); ?></strong>
+                </article>
+                <article class="card card-kpi">
+                    <span class="eyebrow">Asistentes</span>
+                    <strong class="metric-value"><?php echo $total_asistentes; ?></strong>
+                </article>
+            </section>
 
-    <p>
-        <label for="fecha">Fecha</label><br>
-        <input type="datetime-local" id="fecha" name="fecha" required>
-    </p>
+            <section class="card" id="crear-clase">
+                <div class="panel-header">
+                    <div>
+                        <h3>Crear clase</h3>
+                    </div>
+                </div>
 
-    <p>
-        <label for="capacidad">Capacidad</label><br>
-        <input type="number" id="capacidad" name="capacidad" min="1" required>
-    </p>
+                <form action="../app/controllers/crear_clase.php" method="POST" class="form-grid two-columns">
+                    <div class="field">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+                    </div>
 
-    <button type="submit">Crear clase</button>
-</form>
+                    <div class="field">
+                        <label for="capacidad">Capacidad</label>
+                        <input type="number" id="capacidad" name="capacidad" min="1" placeholder="Capacidad" required>
+                    </div>
 
-<h2>Mis clases asignadas</h2>
+                    <div class="field">
+                        <label for="descripcion">Descripcion</label>
+                        <input type="text" id="descripcion" name="descripcion" placeholder="Descripcion" required>
+                    </div>
 
-<?php if ($error_clases): ?>
-    <p>No se han podido cargar tus clases.</p>
-<?php elseif (empty($mis_clases)): ?>
-    <p>No tienes clases asignadas actualmente.</p>
-<?php else: ?>
-    <?php foreach ($mis_clases as $clase): ?>
-        <article>
-            <h3><?php echo htmlspecialchars($clase["nombre"] ?? "Sin nombre"); ?></h3>
-            <p><?php echo htmlspecialchars($clase["descripcion"] ?? ""); ?></p>
-            <p><strong>Fecha:</strong> <?php echo htmlspecialchars($clase["fecha"] ?? ""); ?></p>
-            <p><strong>Capacidad:</strong> <?php echo (int) ($clase["capacidad"] ?? 0); ?></p>
-            <p><strong>Usuarios apuntados:</strong> <?php echo (int) ($clase["total_asistentes"] ?? 0); ?></p>
+                    <div class="field">
+                        <label for="fecha">Fecha y hora</label>
+                        <input type="datetime-local" id="fecha" name="fecha" required>
+                    </div>
 
-            <p>
-                <a href="editar_clase.php?id_clase=<?php echo (int) ($clase["id_clase"] ?? 0); ?>">Editar</a>
-            </p>
+                    <div class="trainer-actions">
+                        <button type="submit" class="btn btn-primary">Crear clase</button>
+                    </div>
+                </form>
+            </section>
 
-            <form action="../app/controllers/eliminar_clase.php" method="POST">
-                <input type="hidden" name="id_clase" value="<?php echo (int) ($clase["id_clase"] ?? 0); ?>">
-                <button type="submit">Cancelar/Eliminar clase</button>
-            </form>
-        </article>
-        <hr>
-    <?php endforeach; ?>
-<?php endif; ?>
+            <section class="card" id="mis-clases">
+                <div class="panel-header">
+                    <div>
+                        <h3>Mis clases</h3>
+                    </div>
+                </div>
 
-<a href="../app/controllers/logout.php">Cerrar sesión</a>
+                <?php if ($error_clases): ?>
+                    <p class="notice-error">No se han podido cargar tus clases.</p>
+                <?php elseif (empty($mis_clases)): ?>
+                    <div class="empty-state">No tienes clases asignadas actualmente.</div>
+                <?php else: ?>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripcion</th>
+                                    <th>Fecha</th>
+                                    <th>Capacidad</th>
+                                    <th>Asistentes</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($mis_clases as $clase): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($clase["nombre"] ?? ""); ?></td>
+                                        <td><?php echo htmlspecialchars($clase["descripcion"] ?? ""); ?></td>
+                                        <td><?php echo htmlspecialchars($clase["fecha"] ?? ""); ?></td>
+                                        <td><?php echo (int) ($clase["capacidad"] ?? 0); ?></td>
+                                        <td><?php echo (int) ($clase["total_asistentes"] ?? 0); ?></td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <a href="editar_clase.php?id_clase=<?php echo (int) ($clase["id_clase"] ?? 0); ?>" class="btn btn-secondary">Editar</a>
+                                                <form action="../app/controllers/eliminar_clase.php" method="POST" class="inline-actions">
+                                                    <input type="hidden" name="id_clase" value="<?php echo (int) ($clase["id_clase"] ?? 0); ?>">
+                                                    <button type="submit">Eliminar</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </section>
+        </div>
+    </main>
+</div>
 
 </body>
 </html>

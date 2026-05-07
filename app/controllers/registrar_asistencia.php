@@ -2,13 +2,16 @@
 session_start();
 require_once __DIR__ . "/../../config/conexion.php";
 
+$origen = $_POST["origen"] ?? "cliente.php";
+$origen_permitido = in_array($origen, ["cliente.php", "asistencia.php"], true) ? $origen : "cliente.php";
+
 if (!isset($_SESSION["id_usuario"]) || $_SESSION["rol"] !== "usuario") {
     header("Location: ../../public/login.php");
     exit;
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: ../../public/cliente.php?asistencia_error=metodo");
+    header("Location: ../../public/" . $origen_permitido . "?asistencia_error=metodo");
     exit;
 }
 
@@ -49,7 +52,7 @@ try {
 
     if (!$planActivo) {
         $conexion->rollback();
-        header("Location: ../../public/cliente.php?asistencia_error=sin_plan");
+        header("Location: ../../public/" . $origen_permitido . "?asistencia_error=sin_plan");
         exit;
     }
 
@@ -71,7 +74,7 @@ try {
 
     if ($yaRegistrada) {
         $conexion->rollback();
-        header("Location: ../../public/cliente.php?asistencia_error=duplicada");
+        header("Location: ../../public/" . $origen_permitido . "?asistencia_error=duplicada");
         exit;
     }
 
@@ -94,7 +97,7 @@ try {
 
         if ((int)$planActivo["usos_restantes"] <= 0) {
         $conexion->rollback();
-        header("Location: ../../public/cliente.php?asistencia_error=bono");
+        header("Location: ../../public/" . $origen_permitido . "?asistencia_error=bono");
         exit;
         }
 
@@ -116,7 +119,7 @@ try {
         if ($stmtDescontarUso->affected_rows !== 1) {
             $stmtDescontarUso->close();
             $conexion->rollback();
-            header("Location: ../../public/cliente.php?asistencia_error=bono");
+            header("Location: ../../public/" . $origen_permitido . "?asistencia_error=bono");
             exit;
         }
 
@@ -124,10 +127,10 @@ try {
     }
 
     $conexion->commit();
-    header("Location: ../../public/cliente.php?asistencia_ok=1");
+    header("Location: ../../public/" . $origen_permitido . "?asistencia_ok=1");
     exit;
 } catch (Exception $e) {
     $conexion->rollback();
-    header("Location: ../../public/cliente.php?asistencia_error=1");
+    header("Location: ../../public/" . $origen_permitido . "?asistencia_error=1");
     exit;
 }

@@ -8,7 +8,7 @@ if (!isset($_SESSION["id_usuario"]) || $_SESSION["rol"] !== "admin") {
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_planes.php?error=1");
     exit;
 }
 
@@ -17,13 +17,13 @@ $accion = trim($_POST["accion"] ?? "");
 $resColumna = $conexion->query("SHOW COLUMNS FROM planes LIKE 'activo'");
 if (!$resColumna || $resColumna->num_rows === 0) {
     if (!$conexion->query("ALTER TABLE planes ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1")) {
-        header("Location: ../../public/admin.php?error=plan_activo_columna");
+        header("Location: ../../public/admin_planes.php?error=plan_activo_columna");
         exit;
     }
 }
 
 if ($accion !== "crear" && $accion !== "editar") {
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_planes.php?error=1");
     exit;
 }
 
@@ -35,32 +35,32 @@ $usos = (int) ($_POST["usos"] ?? 0);
 $activo = $_POST["activo"] ?? "1";
 
 if ($nombre === "") {
-    header("Location: ../../public/admin.php?error=plan_nombre");
+    header("Location: ../../public/admin_planes.php?error=plan_nombre");
     exit;
 }
 
 if (!is_numeric($precio) || (float) $precio < 0) {
-    header("Location: ../../public/admin.php?error=plan_precio");
+    header("Location: ../../public/admin_planes.php?error=plan_precio");
     exit;
 }
 
 if ($tipo !== "suscripcion" && $tipo !== "bono") {
-    header("Location: ../../public/admin.php?error=plan_tipo");
+    header("Location: ../../public/admin_planes.php?error=plan_tipo");
     exit;
 }
 
 if ($tipo === "suscripcion" && $duracion_dias <= 0) {
-    header("Location: ../../public/admin.php?error=plan_duracion");
+    header("Location: ../../public/admin_planes.php?error=plan_duracion");
     exit;
 }
 
 if ($tipo === "bono" && $usos <= 0) {
-    header("Location: ../../public/admin.php?error=plan_usos");
+    header("Location: ../../public/admin_planes.php?error=plan_usos");
     exit;
 }
 
 if ($activo !== "0" && $activo !== "1") {
-    header("Location: ../../public/admin.php?error=activo");
+    header("Location: ../../public/admin_planes.php?error=activo");
     exit;
 }
 
@@ -81,7 +81,7 @@ if ($accion === "crear") {
     $stmt = $conexion->prepare($sql);
 
     if (!$stmt) {
-        header("Location: ../../public/admin.php?error=1");
+        header("Location: ../../public/admin_planes.php?error=1");
         exit;
     }
 
@@ -89,18 +89,18 @@ if ($accion === "crear") {
 
     if (!$stmt->execute()) {
         $stmt->close();
-        header("Location: ../../public/admin.php?error=1");
+        header("Location: ../../public/admin_planes.php?error=1");
         exit;
     }
 
     $stmt->close();
-    header("Location: ../../public/admin.php?ok=creado_plan");
+    header("Location: ../../public/admin_planes.php?ok=creado_plan");
     exit;
 }
 
 $id_plan = (int) ($_POST["id_plan"] ?? 0);
 if ($id_plan <= 0) {
-    header("Location: ../../public/admin.php?error=plan_id");
+    header("Location: ../../public/admin_planes.php?error=plan_id");
     exit;
 }
 
@@ -108,7 +108,7 @@ $sqlExiste = "SELECT id_plan FROM planes WHERE id_plan = ? LIMIT 1";
 $stmtExiste = $conexion->prepare($sqlExiste);
 
 if (!$stmtExiste) {
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_planes.php?error=1");
     exit;
 }
 
@@ -119,7 +119,7 @@ $existe = $resExiste && $resExiste->num_rows === 1;
 $stmtExiste->close();
 
 if (!$existe) {
-    header("Location: ../../public/admin.php?error=plan_no_existe");
+    header("Location: ../../public/admin_planes.php?error=plan_no_existe");
     exit;
 }
 
@@ -129,7 +129,7 @@ $sqlUpdate = "UPDATE planes
 $stmtUpdate = $conexion->prepare($sqlUpdate);
 
 if (!$stmtUpdate) {
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_planes.php?error=1");
     exit;
 }
 
@@ -137,10 +137,11 @@ $stmtUpdate->bind_param("sdsiiii", $nombre, $precio_float, $tipo, $duracion_dias
 
 if (!$stmtUpdate->execute()) {
     $stmtUpdate->close();
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_planes.php?error=1");
     exit;
 }
 
 $stmtUpdate->close();
-header("Location: ../../public/admin.php?ok=actualizado_plan");
+header("Location: ../../public/admin_planes.php?ok=actualizado_plan");
 exit;
+

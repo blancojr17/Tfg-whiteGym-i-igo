@@ -1,0 +1,10 @@
+.trainer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.trainer-actions .btn,
+.trainer-actions button {
+    min-width: 160px;
+}

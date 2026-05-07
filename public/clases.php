@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 require_once __DIR__ . "/../config/conexion.php";
 
@@ -26,7 +26,6 @@ $sql = "SELECT c.id_clase,
         ORDER BY c.fecha ASC";
 
 $stmt = $conexion->prepare($sql);
-
 if ($stmt) {
     $stmt->bind_param("i", $id_usuario);
     $stmt->execute();
@@ -53,103 +52,106 @@ if (isset($_GET["ok"])) {
 }
 
 if (isset($_GET["error"])) {
-    if ($_GET["error"] === "duplicado") {
-        $mensaje_error = "Ya estás apuntado a esa clase.";
-    } elseif ($_GET["error"] === "llena") {
-        $mensaje_error = "La clase está llena.";
-    } elseif ($_GET["error"] === "no_apuntado") {
-        $mensaje_error = "No estás apuntado a esa clase.";
-    } elseif ($_GET["error"] === "clase") {
-        $mensaje_error = "La clase no existe.";
-    } else {
-        $mensaje_error = "No se pudo completar la operación.";
-    }
+    $mensaje_error = "No se pudo completar la operacion.";
 }
-
-// Base preparada para futuras ampliaciones: creación, edición, cancelación y calendario.
-$clases_config_futuro = [
-    "permite_crear" => false,
-    "permite_editar" => false,
-    "permite_cancelar" => false,
-    "modo_calendario" => false
-];
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clases - WhiteGym</title>
+    <title>Reservar clases - WhiteGym</title>
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/cliente.css">
 </head>
 <body>
 
-<header id="cabecera-cliente">
-    <h1>WhiteGym</h1>
-    <div id="info-cliente">
-        <span><?php echo htmlspecialchars($_SESSION["nombre"]); ?></span>
-        <a href="cliente.php">Volver</a>
-        <a href="../app/controllers/logout.php" id="btn-cerrar-sesion">Cerrar sesión</a>
-    </div>
-</header>
+<?php include __DIR__ . "/includes/topbar.php"; ?>
 
-<main id="contenido-cliente">
-    <h2>Clases disponibles</h2>
+<div class="dashboard-layout">
+    <?php include __DIR__ . "/includes/sidebar_cliente.php"; ?>
 
-    <?php if ($mensaje_exito !== ""): ?>
-        <p><?php echo htmlspecialchars($mensaje_exito); ?></p>
-    <?php endif; ?>
+    <main class="dashboard-main">
+        <div class="page-shell">
+            <div class="page-header">
+                <div>
+                    <span class="eyebrow">Clases</span>
+                    <h2>Reservar clases</h2>
+                    <p>Explora las clases disponibles y gestiona tu plaza con una experiencia mas clara y ordenada.</p>
+                </div>
+                <div class="page-actions">
+                    <a href="mis_clases.php" class="btn btn-secondary">Ver mis clases</a>
+                </div>
+            </div>
 
-    <?php if ($mensaje_error !== ""): ?>
-        <p><?php echo htmlspecialchars($mensaje_error); ?></p>
-    <?php endif; ?>
+            <?php if ($mensaje_exito !== ""): ?>
+                <p class="notice-ok"><?php echo htmlspecialchars($mensaje_exito); ?></p>
+            <?php endif; ?>
 
-    <?php if ($error_clases): ?>
-        <p>No se han podido cargar las clases.</p>
-    <?php elseif (empty($clases)): ?>
-        <p>No hay clases disponibles.</p>
-    <?php else: ?>
-        <?php foreach ($clases as $clase): ?>
-            <?php
-                $id_clase = (int) ($clase["id_clase"] ?? 0);
-                $capacidad = (int) ($clase["capacidad"] ?? 0);
-                $ocupadas = (int) ($clase["plazas_ocupadas"] ?? 0);
-                $apuntado = ((int) ($clase["usuario_apuntado"] ?? 0)) === 1;
-                $llena = $ocupadas >= $capacidad;
-                $entrenador = trim((string) ($clase["entrenador"] ?? ""));
-            ?>
-            <article>
-                <h3><?php echo htmlspecialchars($clase["nombre"] ?? "Sin nombre"); ?></h3>
-                <p><?php echo htmlspecialchars($clase["descripcion"] ?? ""); ?></p>
-                <p><strong>Fecha:</strong> <?php echo htmlspecialchars($clase["fecha"] ?? ""); ?></p>
-                <p><strong>Capacidad:</strong> <?php echo $capacidad; ?></p>
-                <p><strong>Plazas ocupadas:</strong> <?php echo $ocupadas; ?></p>
-                <p><strong>Entrenador:</strong> <?php echo htmlspecialchars($entrenador !== "" ? $entrenador : "Sin asignar"); ?></p>
+            <?php if ($mensaje_error !== ""): ?>
+                <p class="notice-error"><?php echo htmlspecialchars($mensaje_error); ?></p>
+            <?php endif; ?>
 
-                <?php if ($apuntado): ?>
-                    <p><strong>Estado:</strong> Apuntado</p>
-                    <form action="../app/controllers/gestionar_clase.php" method="POST">
-                        <input type="hidden" name="id_clase" value="<?php echo $id_clase; ?>">
-                        <input type="hidden" name="accion" value="desapuntar">
-                        <button type="submit">Desapuntarme</button>
-                    </form>
-                <?php else: ?>
-                    <?php if ($llena): ?>
-                        <p><strong>Estado:</strong> Clase llena</p>
-                    <?php else: ?>
-                        <p><strong>Estado:</strong> Plazas disponibles</p>
-                        <form action="../app/controllers/gestionar_clase.php" method="POST">
-                            <input type="hidden" name="id_clase" value="<?php echo $id_clase; ?>">
-                            <input type="hidden" name="accion" value="apuntar">
-                            <button type="submit">Apuntarme</button>
-                        </form>
-                    <?php endif; ?>
-                <?php endif; ?>
-            </article>
-            <hr>
-        <?php endforeach; ?>
-    <?php endif; ?>
-</main>
+            <?php if ($error_clases): ?>
+                <p class="notice-error">No se han podido cargar las clases.</p>
+            <?php elseif (empty($clases)): ?>
+                <div class="empty-state">No hay clases disponibles en este momento.</div>
+            <?php else: ?>
+                <section class="grid-cards">
+                    <?php foreach ($clases as $clase): ?>
+                        <?php
+                        $id_clase = (int) ($clase["id_clase"] ?? 0);
+                        $capacidad = (int) ($clase["capacidad"] ?? 0);
+                        $ocupadas = (int) ($clase["plazas_ocupadas"] ?? 0);
+                        $apuntado = ((int) ($clase["usuario_apuntado"] ?? 0)) === 1;
+                        $llena = $ocupadas >= $capacidad;
+                        $entrenador = trim((string) ($clase["entrenador"] ?? ""));
+                        ?>
+                        <article class="card">
+                            <div class="panel-header">
+                                <div>
+                                    <h3><?php echo htmlspecialchars($clase["nombre"] ?? "Sin nombre"); ?></h3>
+                                    <p><?php echo htmlspecialchars($clase["descripcion"] ?? ""); ?></p>
+                                </div>
+                                <?php if ($apuntado): ?>
+                                    <span class="status-pill status-ok">Apuntado</span>
+                                <?php elseif ($llena): ?>
+                                    <span class="status-pill status-muted">Clase llena</span>
+                                <?php else: ?>
+                                    <span class="status-pill status-accent">Plazas libres</span>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="class-card-meta">
+                                <p><strong>Fecha:</strong> <?php echo htmlspecialchars($clase["fecha"] ?? ""); ?></p>
+                                <p><strong>Entrenador:</strong> <?php echo htmlspecialchars($entrenador !== "" ? $entrenador : "Sin asignar"); ?></p>
+                                <p><strong>Plazas:</strong> <?php echo $ocupadas; ?> / <?php echo $capacidad; ?></p>
+                            </div>
+
+                            <?php if ($apuntado): ?>
+                                <form action="../app/controllers/gestionar_clase.php" method="POST" class="inline-actions">
+                                    <input type="hidden" name="id_clase" value="<?php echo $id_clase; ?>">
+                                    <input type="hidden" name="accion" value="desapuntar">
+                                    <input type="hidden" name="origen" value="clases.php">
+                                    <button type="submit" class="btn btn-secondary">Desapuntarme</button>
+                                </form>
+                            <?php elseif (!$llena): ?>
+                                <form action="../app/controllers/gestionar_clase.php" method="POST" class="inline-actions">
+                                    <input type="hidden" name="id_clase" value="<?php echo $id_clase; ?>">
+                                    <input type="hidden" name="accion" value="apuntar">
+                                    <input type="hidden" name="origen" value="clases.php">
+                                    <button type="submit" class="btn btn-primary">Apuntarme</button>
+                                </form>
+                            <?php endif; ?>
+                        </article>
+                    <?php endforeach; ?>
+                </section>
+            <?php endif; ?>
+        </div>
+    </main>
+</div>
 
 </body>
 </html>

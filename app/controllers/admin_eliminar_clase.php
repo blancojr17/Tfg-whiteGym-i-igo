@@ -8,14 +8,14 @@ if (!isset($_SESSION["id_usuario"]) || $_SESSION["rol"] !== "admin") {
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_clases.php?error=1");
     exit;
 }
 
 $id_clase = (int) ($_POST["id_clase"] ?? 0);
 
 if ($id_clase <= 0) {
-    header("Location: ../../public/admin.php?error=admin_clase_id");
+    header("Location: ../../public/admin_clases.php?error=admin_clase_id");
     exit;
 }
 
@@ -23,7 +23,7 @@ $sqlExiste = "SELECT id_clase FROM clases WHERE id_clase = ? LIMIT 1";
 $stmtExiste = $conexion->prepare($sqlExiste);
 
 if (!$stmtExiste) {
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_clases.php?error=1");
     exit;
 }
 
@@ -34,7 +34,7 @@ $existe = $resExiste && $resExiste->num_rows === 1;
 $stmtExiste->close();
 
 if (!$existe) {
-    header("Location: ../../public/admin.php?error=admin_clase_no_existe");
+    header("Location: ../../public/admin_clases.php?error=admin_clase_no_existe");
     exit;
 }
 
@@ -72,17 +72,18 @@ try {
     if ($stmtDeleteClase->affected_rows !== 1) {
         $stmtDeleteClase->close();
         $conexion->rollback();
-        header("Location: ../../public/admin.php?error=admin_clase_no_existe");
+        header("Location: ../../public/admin_clases.php?error=admin_clase_no_existe");
         exit;
     }
 
     $stmtDeleteClase->close();
 
     $conexion->commit();
-    header("Location: ../../public/admin.php?ok=admin_clase_eliminada");
+    header("Location: ../../public/admin_clases.php?ok=admin_clase_eliminada");
     exit;
 } catch (Exception $e) {
     $conexion->rollback();
-    header("Location: ../../public/admin.php?error=1");
+    header("Location: ../../public/admin_clases.php?error=1");
     exit;
 }
+
