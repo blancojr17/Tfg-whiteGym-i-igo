@@ -33,10 +33,18 @@ $redirect_suffix = $redirect_filtrado ? "&" . http_build_query($redirect_filtrad
 
 $id_admin_actual = (int) $_SESSION["id_usuario"];
 $id_usuario = (int) ($_POST["id_usuario"] ?? 0);
+$nombre = trim((string) ($_POST["nombre"] ?? ""));
+$apellidos = trim((string) ($_POST["apellidos"] ?? ""));
+$email = trim((string) ($_POST["email"] ?? ""));
+$telefono = trim((string) ($_POST["telefono"] ?? ""));
+$sexo = trim((string) ($_POST["sexo"] ?? ""));
+$ciudad = trim((string) ($_POST["ciudad"] ?? ""));
+$fecha_nacimiento = trim((string) ($_POST["fecha_nacimiento"] ?? ""));
 $rol = trim($_POST["rol"] ?? "");
 $activo = $_POST["activo"] ?? "";
 
 $roles_validos = ["usuario", "entrenador", "admin"];
+$sexos_validos = ["", "hombre", "mujer", "otro"];
 
 if ($id_usuario <= 0) {
     header("Location: ../../public/admin_usuarios.php?error=id" . $redirect_suffix);
@@ -45,6 +53,24 @@ if ($id_usuario <= 0) {
 
 if (!in_array($rol, $roles_validos, true)) {
     header("Location: ../../public/admin_usuarios.php?error=rol" . $redirect_suffix);
+    exit;
+}
+
+if ($nombre === "" || $apellidos === "" || $email === "" || !filter_var($email, FILTER_VALIDATE_EMAIL) || !in_array($sexo, $sexos_validos, true)) {
+    header("Location: ../../public/admin_usuarios.php?error=campos" . $redirect_suffix);
+    exit;
+}
+
+if ($fecha_nacimiento !== "") {
+    $fecha_valida = DateTime::createFromFormat("Y-m-d", $fecha_nacimiento);
+    if (!$fecha_valida || $fecha_valida->format("Y-m-d") !== $fecha_nacimiento) {
+        header("Location: ../../public/admin_usuarios.php?error=fecha" . $redirect_suffix);
+        exit;
+    }
+}
+
+if (strlen($nombre) > 80 || strlen($apellidos) > 120 || strlen($email) > 150 || strlen($telefono) > 30 || strlen($ciudad) > 120) {
+    header("Location: ../../public/admin_usuarios.php?error=campos" . $redirect_suffix);
     exit;
 }
 
@@ -79,7 +105,33 @@ if (!$existe) {
     exit;
 }
 
-$sqlUpdate = "UPDATE usuarios SET rol = ?, activo = ? WHERE id_usuario = ?";
+$sqlEmail = "SELECT id_usuario FROM usuarios WHERE email = ? AND id_usuario <> ? LIMIT 1";
+$stmtEmail = $conexion->prepare($sqlEmail);
+
+if (!$stmtEmail) {
+    header("Location: ../../public/admin_usuarios.php?error=1" . $redirect_suffix);
+    exit;
+}
+
+$stmtEmail->bind_param("si", $email, $id_usuario);
+$stmtEmail->execute();
+$resEmail = $stmtEmail->get_result();
+$email_ocupado = $resEmail && $resEmail->num_rows === 1;
+$stmtEmail->close();
+
+if ($email_ocupado) {
+    header("Location: ../../public/admin_usuarios.php?error=email" . $redirect_suffix);
+    exit;
+}
+
+$telefono_sql = $telefono !== "" ? $telefono : null;
+$sexo_sql = $sexo !== "" ? $sexo : null;
+$ciudad_sql = $ciudad !== "" ? $ciudad : null;
+$fecha_nacimiento_sql = $fecha_nacimiento !== "" ? $fecha_nacimiento : null;
+
+$sqlUpdate = "UPDATE usuarios
+              SET nombre = ?, apellidos = ?, email = ?, telefono = ?, sexo = ?, ciudad = ?, fecha_nacimiento = ?, rol = ?, activo = ?
+              WHERE id_usuario = ?";
 $stmtUpdate = $conexion->prepare($sqlUpdate);
 
 if (!$stmtUpdate) {
@@ -87,7 +139,7 @@ if (!$stmtUpdate) {
     exit;
 }
 
-$stmtUpdate->bind_param("sii", $rol, $activo_int, $id_usuario);
+$stmtUpdate->bind_param("ssssssssii", $nombre, $apellidos, $email, $telefono_sql, $sexo_sql, $ciudad_sql, $fecha_nacimiento_sql, $rol, $activo_int, $id_usuario);
 
 if (!$stmtUpdate->execute()) {
     $stmtUpdate->close();

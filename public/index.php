@@ -1,4 +1,17 @@
 ﻿<!DOCTYPE html>
+<?php
+$estado_sugerencia = (string) ($_GET["sugerencia"] ?? "");
+$mensaje_sugerencia = "";
+$clase_mensaje_sugerencia = "mensaje-exito oculto";
+
+if ($estado_sugerencia === "ok") {
+  $mensaje_sugerencia = "Mensaje enviado correctamente";
+  $clase_mensaje_sugerencia = "mensaje-exito";
+} elseif ($estado_sugerencia === "error") {
+  $mensaje_sugerencia = "No se pudo enviar el mensaje. Revisa los campos obligatorios.";
+  $clase_mensaje_sugerencia = "mensaje-exito error";
+}
+?>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -14,15 +27,30 @@
       </a>
     </div>
 
-    <nav class="nav-center">
-      <a href="#inicio">Inicio</a>
-      <a href="#planes">Planes</a>
-      <a href="#clases">Clases</a>
-      <a href="#contacto">Contacto</a>
-    </nav>
+    <button
+      type="button"
+      class="nav-toggle"
+      id="nav-toggle"
+      aria-expanded="false"
+      aria-controls="nav-menu"
+      aria-label="Abrir menú principal"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
-    <div class="nav-right">
-      <a href="login.php" class="login-btn">Iniciar sesión</a>
+    <div class="nav-menu" id="nav-menu">
+      <nav class="nav-center">
+        <a href="#inicio">Inicio</a>
+        <a href="#planes">Planes</a>
+        <a href="#clases">Clases</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+
+      <div class="nav-right">
+        <a href="login.php" class="login-btn">Iniciar sesión</a>
+      </div>
     </div>
   </header>
 
@@ -270,7 +298,7 @@
       <br>
 
       <div class="contacto-grid">
-        <form class="formulario" id="formulario-contacto">
+        <form class="formulario" id="formulario-contacto" action="../app/controllers/enviar_sugerencia.php" method="POST">
           <div class="fila">
             <input type="text" name="nombre" placeholder="Nombre completo *" required>
             <input type="email" name="email" placeholder="Email *" required>
@@ -293,8 +321,8 @@
             <button type="submit">Enviar mensaje</button>
           </div>
 
-          <p class="mensaje-exito oculto" id="mensaje-exito">
-            Mensaje enviado correctamente
+          <p class="<?php echo htmlspecialchars($clase_mensaje_sugerencia); ?>" id="mensaje-exito">
+            <?php echo htmlspecialchars($mensaje_sugerencia); ?>
           </p>
         </form>
 

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . "/../config/conexion.php";
+require_once __DIR__ . "/../app/helpers/fitness_helper.php";
 
 if (!isset($_SESSION["id_usuario"]) || !isset($_SESSION["email"]) || $_SESSION["rol"] !== "usuario") {
     header("Location: login.php");
@@ -8,13 +9,9 @@ if (!isset($_SESSION["id_usuario"]) || !isset($_SESSION["email"]) || $_SESSION["
 }
 
 $id_usuario = (int) $_SESSION["id_usuario"];
-$actividad_opciones = range(1, 7);
-$intensidades = ["baja" => "Baja", "media" => "Media", "alta" => "Alta"];
-$objetivos = [
-    "perder_grasa" => "Perder grasa",
-    "mantener_peso" => "Mantener peso",
-    "ganar_masa" => "Ganar masa muscular"
-];
+$actividad_opciones = fitness_activity_options();
+$intensidades = fitness_intensity_options();
+$objetivos = fitness_goal_options();
 
 $datos = [
     "peso" => 0.0,
@@ -35,75 +32,6 @@ $historial = [];
 $fecha_ultima_medida = null;
 $mensaje_ok = "";
 $mensaje_error = "";
-
-function calcular_fitness(array $datos): array
-{
-    $peso = (float) $datos["peso"];
-    $altura = (float) $datos["altura"];
-    $edad = (int) $datos["edad"];
-    $sexo = (string) $datos["sexo"];
-    $actividad = (int) $datos["actividad_semanal"];
-    $intensidad = (string) $datos["intensidad"];
-    $objetivo = (string) $datos["objetivo"];
-
-    $altura_m = $altura / 100;
-    $imc = $peso / ($altura_m * $altura_m);
-    $tmb = $sexo === "mujer"
-        ? (10 * $peso) + (6.25 * $altura) - (5 * $edad) - 161
-        : (10 * $peso) + (6.25 * $altura) - (5 * $edad) + 5;
-
-    $factor_actividad = [
-        1 => 1.20,
-        2 => 1.28,
-        3 => 1.36,
-        4 => 1.44,
-        5 => 1.53,
-        6 => 1.62,
-        7 => 1.70
-    ];
-    $factor_intensidad = [
-        "baja" => 0.98,
-        "media" => 1.00,
-        "alta" => 1.08
-    ];
-    $ajuste_objetivo = [
-        "perder_grasa" => -350,
-        "mantener_peso" => 0,
-        "ganar_masa" => 300
-    ];
-    $proteinas_por_kg = [
-        "perder_grasa" => 2.0,
-        "mantener_peso" => 1.8,
-        "ganar_masa" => 2.0
-    ];
-    $grasas_por_kg = [
-        "perder_grasa" => 0.8,
-        "mantener_peso" => 0.9,
-        "ganar_masa" => 1.0
-    ];
-    $agua_extra = [
-        "baja" => 0.00,
-        "media" => 0.20,
-        "alta" => 0.40
-    ];
-
-    $mantenimiento = $tmb * ($factor_actividad[$actividad] ?? 1.2) * ($factor_intensidad[$intensidad] ?? 1);
-    $calorias = (int) round($mantenimiento + ($ajuste_objetivo[$objetivo] ?? 0));
-    $proteinas = round($peso * ($proteinas_por_kg[$objetivo] ?? 1.8), 1);
-    $grasas = round($peso * ($grasas_por_kg[$objetivo] ?? 0.9), 1);
-    $kcal_restantes = max($calorias - (($proteinas * 4) + ($grasas * 9)), 0);
-    $carbohidratos = round($kcal_restantes / 4, 1);
-    $agua_litros = round(($peso * 0.033) + ($actividad * 0.10) + ($agua_extra[$intensidad] ?? 0), 2);
-
-    return [
-        "imc" => round($imc, 2),
-        "calorias_recomendadas" => $calorias,
-        "agua_litros" => $agua_litros,
-        "proteinas" => $proteinas,
-        "carbohidratos" => $carbohidratos,
-        "grasas" => $grasas
-    ];
-}
 
 $stmtUltima = $conexion->prepare("SELECT peso, altura, edad, sexo, actividad_semanal, intensidad, objetivo, calorias_recomendadas, agua_litros, proteinas, carbohidratos, grasas, imc, fecha_registro
     FROM medidas_usuario
@@ -143,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (!$datos_validos) {
         $mensaje_error = "Revisa los datos introducidos antes de guardar tu seguimiento.";
     } else {
-        $calculados = calcular_fitness($datos);
+        $calculados = calculate_fitness($datos);
         $datos = array_merge($datos, $calculados);
 
         $stmtInsert = $conexion->prepare("INSERT INTO medidas_usuario
@@ -182,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 if ((float) $datos["peso"] > 0 && (float) $datos["altura"] > 0 && (int) $datos["edad"] > 0) {
-    $datos = array_merge($datos, calcular_fitness($datos));
+    $datos = array_merge($datos, calculate_fitness($datos));
 }
 
 $stmtHistorial = $conexion->prepare("SELECT fecha_registro, peso, imc, objetivo

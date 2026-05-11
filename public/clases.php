@@ -106,8 +106,25 @@ if (isset($_GET["error"])) {
                         $capacidad = (int) ($clase["capacidad"] ?? 0);
                         $ocupadas = (int) ($clase["plazas_ocupadas"] ?? 0);
                         $apuntado = ((int) ($clase["usuario_apuntado"] ?? 0)) === 1;
-                        $llena = $ocupadas >= $capacidad;
+                        $llena = $capacidad > 0 && $ocupadas >= $capacidad;
                         $entrenador = trim((string) ($clase["entrenador"] ?? ""));
+                        $ocupacion = $capacidad > 0 ? min(100, (int) round(($ocupadas / $capacidad) * 100)) : 0;
+                        $plazas_restantes = max(0, $capacidad - $ocupadas);
+                        $estado_ocupacion = "low";
+
+                        if ($ocupacion > 80) {
+                            $estado_ocupacion = "high";
+                        } elseif ($ocupacion > 50) {
+                            $estado_ocupacion = "medium";
+                        }
+
+                        if ($plazas_restantes === 0) {
+                            $texto_plazas = "Clase completa";
+                        } elseif ($plazas_restantes <= 2) {
+                            $texto_plazas = "Clase casi completa";
+                        } else {
+                            $texto_plazas = "Quedan " . $plazas_restantes . " plazas";
+                        }
                         ?>
                         <article class="card">
                             <div class="panel-header">
@@ -128,6 +145,17 @@ if (isset($_GET["error"])) {
                                 <p><strong>Fecha:</strong> <?php echo htmlspecialchars($clase["fecha"] ?? ""); ?></p>
                                 <p><strong>Entrenador:</strong> <?php echo htmlspecialchars($entrenador !== "" ? $entrenador : "Sin asignar"); ?></p>
                                 <p><strong>Plazas:</strong> <?php echo $ocupadas; ?> / <?php echo $capacidad; ?></p>
+                            </div>
+
+                            <div class="class-occupancy">
+                                <div class="class-occupancy-head">
+                                    <strong>Ocupacion</strong>
+                                    <span><?php echo $ocupacion; ?>%</span>
+                                </div>
+                                <progress class="class-occupancy-bar occupancy-<?php echo $estado_ocupacion; ?>" max="100" value="<?php echo $ocupacion; ?>">
+                                    <?php echo $ocupacion; ?>%
+                                </progress>
+                                <p class="class-occupancy-copy"><?php echo htmlspecialchars($texto_plazas); ?></p>
                             </div>
 
                             <?php if ($apuntado): ?>

@@ -16,11 +16,14 @@ $sql = "SELECT c.id_clase,
                c.descripcion,
                c.fecha,
                c.capacidad,
-               CONCAT(COALESCE(e.nombre, ''), ' ', COALESCE(e.apellidos, '')) AS entrenador
+               CONCAT(COALESCE(e.nombre, ''), ' ', COALESCE(e.apellidos, '')) AS entrenador,
+               COUNT(uc_total.id_usuario_clase) AS plazas_ocupadas
         FROM usuarios_clases uc
         INNER JOIN clases c ON uc.id_clase = c.id_clase
         LEFT JOIN usuarios e ON c.id_entrenador = e.id_usuario
+        LEFT JOIN usuarios_clases uc_total ON c.id_clase = uc_total.id_clase
         WHERE uc.id_usuario = ?
+        GROUP BY c.id_clase, c.nombre, c.descripcion, c.fecha, c.capacidad, e.nombre, e.apellidos
         ORDER BY c.fecha ASC";
 
 $stmt = $conexion->prepare($sql);
@@ -76,7 +79,28 @@ if ($stmt) {
             <?php else: ?>
                 <section class="grid-cards">
                     <?php foreach ($mis_clases as $clase): ?>
-                        <?php $entrenador = trim((string) ($clase["entrenador"] ?? "")); ?>
+                        <?php
+                        $entrenador = trim((string) ($clase["entrenador"] ?? ""));
+                        $capacidad = (int) ($clase["capacidad"] ?? 0);
+                        $ocupadas = (int) ($clase["plazas_ocupadas"] ?? 0);
+                        $ocupacion = $capacidad > 0 ? min(100, (int) round(($ocupadas / $capacidad) * 100)) : 0;
+                        $plazas_restantes = max(0, $capacidad - $ocupadas);
+                        $estado_ocupacion = "low";
+
+                        if ($ocupacion > 80) {
+                            $estado_ocupacion = "high";
+                        } elseif ($ocupacion > 50) {
+                            $estado_ocupacion = "medium";
+                        }
+
+                        if ($plazas_restantes === 0) {
+                            $texto_plazas = "Clase completa";
+                        } elseif ($plazas_restantes <= 2) {
+                            $texto_plazas = "Clase casi completa";
+                        } else {
+                            $texto_plazas = "Quedan " . $plazas_restantes . " plazas";
+                        }
+                        ?>
                         <article class="card">
                             <div class="panel-header">
                                 <div>
@@ -89,7 +113,18 @@ if ($stmt) {
                             <div class="class-card-meta">
                                 <p><strong>Fecha:</strong> <?php echo htmlspecialchars($clase["fecha"] ?? ""); ?></p>
                                 <p><strong>Entrenador:</strong> <?php echo htmlspecialchars($entrenador !== "" ? $entrenador : "Sin asignar"); ?></p>
-                                <p><strong>Capacidad:</strong> <?php echo (int) ($clase["capacidad"] ?? 0); ?> plazas</p>
+                                <p><strong>Plazas:</strong> <?php echo $ocupadas; ?> / <?php echo $capacidad; ?></p>
+                            </div>
+
+                            <div class="class-occupancy">
+                                <div class="class-occupancy-head">
+                                    <strong>Ocupacion</strong>
+                                    <span><?php echo $ocupacion; ?>%</span>
+                                </div>
+                                <progress class="class-occupancy-bar occupancy-<?php echo $estado_ocupacion; ?>" max="100" value="<?php echo $ocupacion; ?>">
+                                    <?php echo $ocupacion; ?>%
+                                </progress>
+                                <p class="class-occupancy-copy"><?php echo htmlspecialchars($texto_plazas); ?></p>
                             </div>
 
                             <form action="../app/controllers/gestionar_clase.php" method="POST" class="inline-actions">

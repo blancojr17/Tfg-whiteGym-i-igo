@@ -11,7 +11,10 @@ $total_usuarios = 0;
 $total_entrenadores = 0;
 $total_clases = 0;
 $total_reservas = 0;
+$ingresos_estimados = 0.0;
 $clases_mas_llenas = [];
+$distribucion_planes = [];
+$clase_mas_popular = null;
 $ultimas_clases = [];
 $ultimos_usuarios = [];
 $error_datos = false;
@@ -32,6 +35,75 @@ if ($stmtTotales) {
         $total_clases = (int) ($fila["total_clases"] ?? 0);
         $total_reservas = (int) ($fila["total_reservas"] ?? 0);
     }
+} else {
+    $error_datos = true;
+}
+
+$sqlIngresos = "SELECT COALESCE(SUM(p.precio), 0) AS ingresos_estimados
+    FROM usuarios_planes up
+    INNER JOIN planes p ON up.id_plan = p.id_plan
+    WHERE up.fecha_fin >= CURDATE()
+      AND (
+          p.tipo = 'suscripcion'
+          OR (p.tipo = 'bono' AND up.usos_restantes > 0)
+      )";
+$stmtIngresos = $conexion->prepare($sqlIngresos);
+if ($stmtIngresos) {
+    $stmtIngresos->execute();
+    $resIngresos = $stmtIngresos->get_result();
+    $filaIngresos = $resIngresos ? $resIngresos->fetch_assoc() : null;
+    $ingresos_estimados = (float) ($filaIngresos["ingresos_estimados"] ?? 0);
+    $stmtIngresos->close();
+} else {
+    $error_datos = true;
+}
+
+$sqlDistribucionPlanes = "SELECT p.nombre, COUNT(*) AS total_usuarios_plan
+    FROM usuarios_planes up
+    INNER JOIN planes p ON up.id_plan = p.id_plan
+    WHERE up.fecha_fin >= CURDATE()
+      AND (
+          p.tipo = 'suscripcion'
+          OR (p.tipo = 'bono' AND up.usos_restantes > 0)
+      )
+    GROUP BY p.id_plan, p.nombre
+    ORDER BY total_usuarios_plan DESC, p.nombre ASC";
+$stmtDistribucionPlanes = $conexion->prepare($sqlDistribucionPlanes);
+if ($stmtDistribucionPlanes) {
+    $stmtDistribucionPlanes->execute();
+    $resDistribucionPlanes = $stmtDistribucionPlanes->get_result();
+    $total_planes_activos = 0;
+
+    while ($filaPlan = $resDistribucionPlanes->fetch_assoc()) {
+        $distribucion_planes[] = $filaPlan;
+        $total_planes_activos += (int) ($filaPlan["total_usuarios_plan"] ?? 0);
+    }
+
+    $stmtDistribucionPlanes->close();
+
+    if ($total_planes_activos > 0) {
+        foreach ($distribucion_planes as &$planDistribucion) {
+            $usuarios_plan = (int) ($planDistribucion["total_usuarios_plan"] ?? 0);
+            $planDistribucion["porcentaje"] = round(($usuarios_plan / $total_planes_activos) * 100, 1);
+        }
+        unset($planDistribucion);
+    }
+} else {
+    $error_datos = true;
+}
+
+$sqlClasePopular = "SELECT c.nombre, COUNT(uc.id_usuario_clase) AS total_reservas
+    FROM clases c
+    INNER JOIN usuarios_clases uc ON c.id_clase = uc.id_clase
+    GROUP BY c.nombre
+    ORDER BY total_reservas DESC, c.nombre ASC
+    LIMIT 1";
+$stmtClasePopular = $conexion->prepare($sqlClasePopular);
+if ($stmtClasePopular) {
+    $stmtClasePopular->execute();
+    $resClasePopular = $stmtClasePopular->get_result();
+    $clase_mas_popular = $resClasePopular ? $resClasePopular->fetch_assoc() : null;
+    $stmtClasePopular->close();
 } else {
     $error_datos = true;
 }
@@ -128,6 +200,60 @@ if ($stmtUltimos) {
                 <article class="card card-kpi">
                     <span class="eyebrow">Reservas</span>
                     <strong class="metric-value"><?php echo $total_reservas; ?></strong>
+                </article>
+                <article class="card card-kpi">
+                    <span class="eyebrow">Ingresos estimados</span>
+                    <strong class="metric-value"><?php echo number_format($ingresos_estimados, 2, ",", "."); ?> EUR</strong>
+                    
+                </article>
+            </section>
+
+            <section class="split-grid">
+                <article class="card">
+                    <div class="panel-header">
+                        <div>
+                            <h3>Distribucion de planes</h3>
+                            
+                        </div>
+                    </div>
+
+                    <?php if (empty($distribucion_planes)): ?>
+                        <div class="empty-state">No hay planes activos para calcular la distribucion.</div>
+                    <?php else: ?>
+                        <div class="plan-distribution">
+                            <?php foreach ($distribucion_planes as $plan): ?>
+                                <?php $porcentaje = (float) ($plan["porcentaje"] ?? 0); ?>
+                                <div class="plan-distribution-item">
+                                    <div class="plan-distribution-label">
+                                        <strong><?php echo htmlspecialchars($plan["nombre"] ?? ""); ?></strong>
+                                        <span><?php echo number_format($porcentaje, 1, ",", "."); ?>%</span>
+                                    </div>
+                                    <progress
+                                        class="plan-distribution-bar"
+                                        max="100"
+                                        value="<?php echo max(0, min(100, $porcentaje)); ?>"
+                                    ><?php echo number_format($porcentaje, 1, ",", "."); ?>%</progress>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </article>
+
+                <article class="card">
+                    <div class="panel-header">
+                        <div>
+                            <h3>Clase mas popular</h3>
+                            <p>Clase con mas reservas acumuladas.</p>
+                        </div>
+                    </div>
+
+                    <?php if ($clase_mas_popular): ?>
+                        <span class="eyebrow">Mas reservada</span>
+                        <strong class="metric-value"><?php echo htmlspecialchars($clase_mas_popular["nombre"] ?? ""); ?></strong>
+                        <span class="metric-caption"><?php echo (int) ($clase_mas_popular["total_reservas"] ?? 0); ?> reservas</span>
+                    <?php else: ?>
+                        <div class="empty-state">Todavia no hay reservas registradas.</div>
+                    <?php endif; ?>
                 </article>
             </section>
 

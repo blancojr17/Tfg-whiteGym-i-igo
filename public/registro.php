@@ -26,18 +26,27 @@ if (isset($_SESSION["id_usuario"], $_SESSION["rol"])) {
 </head>
 <body class="pagina-acceso">
 
-    <div class="contenedor-acceso">
+    <div class="contenedor-acceso contenedor-acceso-registro">
         <a href="index.php" class="logo-acceso">
             <img src="assets/img/logosin.png" alt="Logo WhiteGym">
         </a>
 
         <h1>Crear cuenta</h1>
 
-        <form class="formulario-acceso" action="../app/controllers/procesar_registro.php" method="post">
+        <form class="formulario-acceso formulario-acceso-registro" action="../app/controllers/procesar_registro.php" method="post">
             <input type="text" name="nombre" placeholder="Nombre" required autocomplete="given-name">
             <input type="text" name="apellidos" placeholder="Apellidos" required autocomplete="family-name">
             <input type="email" name="email" placeholder="Email" required autocomplete="email">
             <input type="password" name="password" placeholder="Contraseña" required autocomplete="new-password">
+            <input type="text" name="telefono" placeholder="Telefono" required autocomplete="tel">
+            <select name="sexo" required>
+                <option value="">Sexo</option>
+                <option value="hombre">Hombre</option>
+                <option value="mujer">Mujer</option>
+                <option value="otro">Otro</option>
+            </select>
+            <input type="date" name="fecha_nacimiento" required>
+            <input type="text" name="ciudad" placeholder="Ciudad" required autocomplete="address-level2">
 
             <button type="submit">Registrarse</button>
         </form>

@@ -35,6 +35,19 @@
     gap: 12px;
 }
 
+.formulario-acceso-registro {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.formulario-acceso-registro button {
+    grid-column: 1 / -1;
+}
+
+.contenedor-acceso-registro {
+    max-width: 520px;
+}
+
 .formulario-acceso input,
 .formulario-acceso select {
     padding: 10px;
@@ -80,4 +93,10 @@
 
 .logo-acceso img:hover {
     transform: scale(1.1);
+}
+
+@media (max-width: 640px) {
+    .formulario-acceso-registro {
+        grid-template-columns: 1fr;
+    }
 }

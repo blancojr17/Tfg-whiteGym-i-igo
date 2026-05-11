@@ -1,0 +1,93 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: auto;
+    scroll-padding-top: 96px;
+}
+
+body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+}
+
+img,
+video,
+iframe {
+    display: block;
+    max-width: 100%;
+}
+
+h1,
+h2 {
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+p,
+li,
+input,
+select,
+textarea,
+button,
+a {
+    font-family: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+    min-width: 0;
+}
+
+.oculto {
+    display: none;
+}
+
+.contenedor {
+    max-width: 1200px;
+    margin: auto;
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.contenedor h1 {
+    color: #ffffff;
+}
+
+.mensaje-exito {
+    margin-top: 15px;
+    color: #6fdc6f;
+    font-size: 14px;
+}
+
+.mensaje-exito.error {
+    color: #e29494;
+}
+
+@media (max-width: 1024px) {
+    .contenedor {
+        padding: 44px 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .contenedor {
+        padding: 40px 18px;
+    }
+}
+
+@media (max-width: 640px) {
+    .contenedor {
+        padding: 36px 16px;
+    }
+}

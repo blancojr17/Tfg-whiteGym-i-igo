@@ -1,0 +1,132 @@
+.instalaciones {
+    width: 100%;
+    background: #1a1a1a;
+    padding: 70px 0;
+    color: #fff;
+}
+
+.instalaciones-contenido {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.instalaciones h1 {
+    margin-bottom: 10px;
+}
+
+.instalaciones .subtitulo {
+    color: #aaa;
+    margin-bottom: 40px;
+}
+
+.carrusel {
+    position: relative;
+    height: 420px;
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+.carrusel1 {
+    position: absolute;
+    inset: 0;
+    height: 420px;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1.2s ease-in-out;
+    pointer-events: none;
+}
+
+.carrusel1.activo {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.carrusel1::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.2));
+}
+
+.info-carrusel {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    max-width: 500px;
+    text-align: left;
+    z-index: 2;
+}
+
+.info-carrusel h2 {
+    margin: 15px 0 10px;
+}
+
+.info-carrusel p {
+    font-size: 14px;
+    color: #ddd;
+}
+
+.contador {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-right: 8px;
+}
+
+@media (max-width: 1024px) {
+    .instalaciones {
+        padding: 60px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .instalaciones {
+        padding: 46px 0;
+    }
+
+    .instalaciones-contenido {
+        padding: 0 18px;
+    }
+
+    .carrusel,
+    .carrusel1 {
+        height: 360px;
+    }
+
+    .info-carrusel {
+        left: 22px;
+        right: 22px;
+        bottom: 22px;
+        max-width: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .instalaciones {
+        padding: 40px 0;
+    }
+
+    .instalaciones-contenido {
+        padding: 0 16px;
+    }
+
+    .carrusel,
+    .carrusel1 {
+        height: 300px;
+        border-radius: 16px;
+    }
+
+    .info-carrusel {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+    }
+
+    .info-carrusel p {
+        font-size: 13px;
+    }
+}

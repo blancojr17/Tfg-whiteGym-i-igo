@@ -1,0 +1,7 @@
+ALTER TABLE usuarios
+    ADD COLUMN IF NOT EXISTS apellidos VARCHAR(120) NULL AFTER nombre,
+    ADD COLUMN IF NOT EXISTS telefono VARCHAR(30) NULL AFTER email,
+    ADD COLUMN IF NOT EXISTS fecha_nacimiento DATE NULL AFTER telefono,
+    ADD COLUMN IF NOT EXISTS sexo ENUM('hombre', 'mujer', 'otro') NULL AFTER fecha_nacimiento,
+    ADD COLUMN IF NOT EXISTS ciudad VARCHAR(120) NULL AFTER sexo,
+    ADD COLUMN IF NOT EXISTS fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER activo;

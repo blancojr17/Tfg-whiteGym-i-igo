@@ -9,9 +9,10 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 
 $email = trim($_POST["email"] ?? "");
 $password = $_POST["password"] ?? "";
+$redirect_query = $email !== "" ? "&" . http_build_query(["email" => $email]) : "";
 
 if ($email === "" || $password === "" || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    header("Location: ../../public/login.php?error=campos");
+    header("Location: ../../public/login.php?error=campos" . $redirect_query);
     exit;
 }
 
@@ -20,7 +21,7 @@ $sql = "select id_usuario, nombre, email, password, rol, activo from usuarios wh
 $stmt = $conexion->prepare($sql);
 
 if (!$stmt) {
-    header("Location: ../../public/login.php?error=1");
+    header("Location: ../../public/login.php?error=1" . $redirect_query);
     exit;
 }
 
@@ -50,5 +51,5 @@ if ($resultado && $resultado->num_rows === 1) {
     }
 }
 
-header("Location: ../../public/login.php?error=1");
+header("Location: ../../public/login.php?error=1" . $redirect_query);
 exit;

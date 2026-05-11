@@ -35,15 +35,16 @@ $types = "";
 $params = [];
 
 if ($q !== "") {
-    $where[] = "(nombre LIKE ? OR email LIKE ?)";
-    $types .= "ss";
+    $where[] = "(u.nombre LIKE ? OR u.apellidos LIKE ? OR u.email LIKE ?)";
+    $types .= "sss";
     $like = "%" . $q . "%";
+    $params[] = $like;
     $params[] = $like;
     $params[] = $like;
 }
 
 if ($rol_filtro !== "todos") {
-    $where[] = "rol = ?";
+    $where[] = "u.rol = ?";
     $types .= "s";
     $params[] = $rol_filtro;
 }
@@ -52,7 +53,7 @@ $where_sql = $where ? " WHERE " . implode(" AND ", $where) : "";
 $total_usuarios = 0;
 $usuarios = [];
 
-$sqlTotal = "SELECT COUNT(*) AS total FROM usuarios" . $where_sql;
+$sqlTotal = "SELECT COUNT(*) AS total FROM usuarios u" . $where_sql;
 $stmtTotal = $conexion->prepare($sqlTotal);
 if ($stmtTotal) {
     bind_dynamic_params($stmtTotal, $types, $params);
@@ -69,9 +70,33 @@ if ($pagina > $total_paginas) {
     $offset = ($pagina - 1) * $por_pagina;
 }
 
-$sqlUsuarios = "SELECT id_usuario, nombre, email, rol, activo
-                FROM usuarios" . $where_sql . "
-                ORDER BY id_usuario DESC
+$sqlUsuarios = "SELECT u.id_usuario,
+                       u.nombre,
+                       u.apellidos,
+                       u.email,
+                       u.telefono,
+                       u.sexo,
+                       u.ciudad,
+                       u.fecha_nacimiento,
+                       u.fecha_registro,
+                       u.rol,
+                       u.activo,
+                       (
+                           SELECT p.nombre
+                           FROM usuarios_planes up
+                           INNER JOIN planes p ON up.id_plan = p.id_plan
+                           WHERE up.id_usuario = u.id_usuario
+                             AND up.fecha_fin >= CURDATE()
+                             AND (
+                                 p.tipo = 'suscripcion'
+                                 OR (p.tipo = 'bono' AND up.usos_restantes > 0)
+                             )
+                           ORDER BY up.fecha_inicio DESC, up.id_usuario_plan DESC
+                           LIMIT 1
+                       ) AS plan_activo
+                FROM usuarios u
+                " . $where_sql . "
+                ORDER BY u.id_usuario DESC
                 LIMIT ?, ?";
 $stmtUsuarios = $conexion->prepare($sqlUsuarios);
 if ($stmtUsuarios) {
@@ -143,84 +168,9 @@ function build_page_url(int $page, string $q, string $rol): string
                 <p class="notice-error"><?php echo htmlspecialchars($mensaje_error); ?></p>
             <?php endif; ?>
 
-            <section class="card">
-                <form method="GET" class="toolbar">
-                    <div class="field">
-                        <label for="q">Buscar</label>
-                        <input type="text" id="q" name="q" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nombre o email">
-                    </div>
-                    <div class="field">
-                        <label for="rol">Rol</label>
-                        <select id="rol" name="rol">
-                            <option value="todos" <?php echo $rol_filtro === "todos" ? "selected" : ""; ?>>Todos</option>
-                            <option value="usuario" <?php echo $rol_filtro === "usuario" ? "selected" : ""; ?>>Usuario</option>
-                            <option value="entrenador" <?php echo $rol_filtro === "entrenador" ? "selected" : ""; ?>>Entrenador</option>
-                            <option value="admin" <?php echo $rol_filtro === "admin" ? "selected" : ""; ?>>Admin</option>
-                        </select>
-                    </div>
-                    <div class="inline-actions">
-                        <button type="submit">Filtrar</button>
-                        <a href="admin_usuarios.php" class="btn btn-secondary">Limpiar</a>
-                    </div>
-                </form>
-            </section>
+            <?php include __DIR__ . "/includes/admin/filtros_usuarios.php"; ?>
 
-            <section class="card">
-                <?php if (empty($usuarios)): ?>
-                    <div class="empty-state">No hay usuarios para los filtros seleccionados.</div>
-                <?php else: ?>
-                    <div class="table-wrap">
-                        <table class="admin-users-table">
-                            <thead>
-                                <tr>
-                                    <th>Usuario</th>
-                                    <th>Rol</th>
-                                    <th>Estado</th>
-                                    <th>Accion</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($usuarios as $usuario): ?>
-                                    <?php
-                                    $es_mi_cuenta = (int) $usuario["id_usuario"] === $id_admin_actual;
-                                    $estado = ((int) ($usuario["activo"] ?? 0)) === 1 ? "Activo" : "Inactivo";
-                                    ?>
-                                    <tr>
-                                        <td>
-                                            <div class="user-identity">
-                                                <strong><?php echo htmlspecialchars($usuario["nombre"] ?? ""); ?></strong>
-                                                <span><?php echo htmlspecialchars($usuario["email"] ?? ""); ?></span>
-                                            </div>
-                                        </td>
-                                        <td><?php echo htmlspecialchars(ucfirst((string) ($usuario["rol"] ?? ""))); ?></td>
-                                        <td>
-                                            <span class="status-pill <?php echo $estado === "Activo" ? "status-ok" : "status-muted"; ?>">
-                                                <?php echo $estado; ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <button
-                                                type="button"
-                                                class="btn btn-secondary js-open-user-modal"
-                                                data-id="<?php echo (int) ($usuario["id_usuario"] ?? 0); ?>"
-                                                data-nombre="<?php echo htmlspecialchars($usuario["nombre"] ?? "", ENT_QUOTES, 'UTF-8'); ?>"
-                                                data-email="<?php echo htmlspecialchars($usuario["email"] ?? "", ENT_QUOTES, 'UTF-8'); ?>"
-                                                data-rol="<?php echo htmlspecialchars($usuario["rol"] ?? "", ENT_QUOTES, 'UTF-8'); ?>"
-                                                data-activo="<?php echo (int) ($usuario["activo"] ?? 0); ?>"
-                                            >
-                                                Editar
-                                            </button>
-                                            <?php if ($es_mi_cuenta): ?>
-                                                <small class="admin-note">Tu cuenta</small>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php endif; ?>
-            </section>
+            <?php include __DIR__ . "/includes/admin/tabla_usuarios.php"; ?>
 
             <section class="pagination">
                 <span class="muted">Mostrando <?php echo count($usuarios); ?> de <?php echo $total_usuarios; ?> usuarios</span>
@@ -244,49 +194,7 @@ function build_page_url(int $page, string $q, string $rol): string
     </main>
 </div>
 
-<div class="modal-backdrop" id="user-modal-backdrop">
-    <div class="modal">
-        <div class="modal-header">
-            <div>
-                <h3>Editar usuario</h3>
-            </div>
-        </div>
-
-        <form action="../app/controllers/gestionar_usuario.php" method="POST" id="user-modal-form">
-            <input type="hidden" name="id_usuario" id="modal-id-usuario">
-            <input type="hidden" name="redirect_query" value="<?php echo htmlspecialchars($query_contexto, ENT_QUOTES, 'UTF-8'); ?>">
-
-            <div class="modal-body">
-                <div class="modal-meta">
-                    <strong id="modal-nombre"></strong>
-                    <span id="modal-email"></span>
-                </div>
-
-                <div class="field">
-                    <label for="modal-rol">Rol</label>
-                    <select name="rol" id="modal-rol">
-                        <option value="usuario">Usuario</option>
-                        <option value="entrenador">Entrenador</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label for="modal-activo">Estado</label>
-                    <select name="activo" id="modal-activo">
-                        <option value="1">Activo</option>
-                        <option value="0">Inactivo</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" id="close-user-modal">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
-        </form>
-    </div>
-</div>
+<?php include __DIR__ . "/includes/admin/modal_usuario.php"; ?>
 
 <script>
 const userModalBackdrop = document.getElementById("user-modal-backdrop");
@@ -299,9 +207,20 @@ function cerrarModalUsuario() {
 
 userModalTriggers.forEach((button) => {
     button.addEventListener("click", () => {
+        const nombre = button.dataset.nombre || "";
+        const apellidos = button.dataset.apellidos || "";
         document.getElementById("modal-id-usuario").value = button.dataset.id || "";
-        document.getElementById("modal-nombre").textContent = button.dataset.nombre || "";
+        document.getElementById("modal-nombre-completo").textContent = (nombre + " " + apellidos).trim();
+        document.getElementById("modal-nombre").value = nombre;
+        document.getElementById("modal-apellidos").value = apellidos;
         document.getElementById("modal-email").textContent = button.dataset.email || "";
+        document.getElementById("modal-email-input").value = button.dataset.email || "";
+        document.getElementById("modal-telefono").value = button.dataset.telefono || "";
+        document.getElementById("modal-sexo").value = button.dataset.sexo || "";
+        document.getElementById("modal-ciudad").value = button.dataset.ciudad || "";
+        document.getElementById("modal-fecha-nacimiento").value = button.dataset.fechaNacimiento || "";
+        document.getElementById("modal-fecha-registro").textContent = button.dataset.fechaRegistro || "-";
+        document.getElementById("modal-plan-activo").textContent = button.dataset.planActivo || "Sin plan";
         document.getElementById("modal-rol").value = button.dataset.rol || "usuario";
         document.getElementById("modal-activo").value = button.dataset.activo || "1";
         userModalBackdrop.classList.add("is-open");

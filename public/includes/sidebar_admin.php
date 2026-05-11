@@ -12,5 +12,6 @@ $pagina_actual = basename($_SERVER["PHP_SELF"] ?? "");
         <a href="admin_usuarios.php" class="<?php echo $pagina_actual === "admin_usuarios.php" ? "active" : ""; ?>">Usuarios</a>
         <a href="admin_planes.php" class="<?php echo $pagina_actual === "admin_planes.php" ? "active" : ""; ?>">Planes</a>
         <a href="admin_clases.php" class="<?php echo in_array($pagina_actual, ["admin_clases.php", "admin_editar_clase.php"], true) ? "active" : ""; ?>">Clases globales</a>
+        <a href="admin_sugerencias.php" class="<?php echo $pagina_actual === "admin_sugerencias.php" ? "active" : ""; ?>">Sugerencias</a>
     </nav>
 </aside>

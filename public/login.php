@@ -1,5 +1,6 @@
 ﻿<?php
 session_start();
+$email_recuperado = trim((string) ($_GET["email"] ?? ""));
 
 if (isset($_SESSION["id_usuario"], $_SESSION["rol"])) {
     if ($_SESSION["rol"] === "admin") {
@@ -35,7 +36,7 @@ if (isset($_SESSION["id_usuario"], $_SESSION["rol"])) {
     <h1>Iniciar sesión</h1>
 
     <form class="formulario-acceso" action="../app/controllers/procesar_login.php" method="post">
-        <input type="email" name="email" placeholder="Correo electrónico" required autocomplete="email">
+        <input type="email" name="email" placeholder="Correo electrónico" value="<?php echo htmlspecialchars($email_recuperado); ?>" required autocomplete="email">
         <input type="password" name="password" placeholder="Contraseña" required autocomplete="current-password">
 
         <button type="submit">Entrar</button>

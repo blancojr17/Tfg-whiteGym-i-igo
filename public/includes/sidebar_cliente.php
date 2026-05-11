@@ -9,6 +9,7 @@ $pagina_actual = basename($_SERVER["PHP_SELF"] ?? "");
     </div>
     <nav>
         <a href="cliente.php" class="<?php echo $pagina_actual === "cliente.php" ? "active" : ""; ?>">Dashboard</a>
+        <a href="perfil.php" class="<?php echo $pagina_actual === "perfil.php" ? "active" : ""; ?>">Perfil</a>
         <a href="mi_cuerpo.php" class="<?php echo $pagina_actual === "mi_cuerpo.php" ? "active" : ""; ?>">Mi cuerpo</a>
         <a href="planes.php" class="<?php echo $pagina_actual === "planes.php" ? "active" : ""; ?>">Mi plan</a>
         <a href="mis_clases.php" class="<?php echo $pagina_actual === "mis_clases.php" ? "active" : ""; ?>">Mis clases</a>
