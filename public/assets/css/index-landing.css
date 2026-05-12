@@ -31,14 +31,23 @@
 .nav-menu {
     display: flex;
     align-items: center;
-    gap: 30px;
+    justify-content: space-between;
+    flex: 1 1 auto;
     min-width: 0;
 }
 
 .nav-center {
     display: flex;
     gap: 30px;
+    flex: 1 1 auto;
+    justify-content: center;
     min-width: 0;
+}
+
+.nav-right {
+    display: flex;
+    justify-content: flex-end;
+    flex: 0 0 auto;
 }
 
 .nav-center a {
@@ -182,7 +191,7 @@
     }
 
     .nav-menu {
-        gap: 22px;
+        gap: 18px;
     }
 
     .nav-center {
@@ -213,6 +222,7 @@
         left: 18px;
         right: 18px;
         display: grid;
+        justify-content: stretch;
         gap: 18px;
         padding: 22px 20px 20px;
         background: rgba(26, 26, 26, 0.98);
@@ -233,6 +243,7 @@
 
     .nav-center {
         display: grid;
+        flex: initial;
         gap: 14px;
         justify-items: center;
     }
@@ -245,6 +256,7 @@
 
     .nav-right {
         display: grid;
+        flex: initial;
     }
 
     .nav-right .login-btn {

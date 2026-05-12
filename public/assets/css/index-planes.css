@@ -18,6 +18,9 @@
     font-size: 14px;
     font-weight: 700;
 }
+.oculto {
+    display: none !important;
+}
 
 .boton-selector.activo {
     background: #555;
