@@ -80,7 +80,9 @@ if (isset($_GET["error"])) {
         <div class="page-shell">
             <div class="page-header">
                 <div>
-                    <h2>Clases</h2>
+                    <span class="eyebrow">Panel entrenador</span>
+                    <h2>Gestion de clases</h2>
+                    <p>Organiza tus sesiones, revisa el volumen de asistentes y mantén tus clases ordenadas desde un unico panel.</p>
                 </div>
             </div>
 
@@ -96,51 +98,84 @@ if (isset($_GET["error"])) {
                 <article class="card card-kpi">
                     <span class="eyebrow">Clases</span>
                     <strong class="metric-value"><?php echo count($mis_clases); ?></strong>
+                    <span class="metric-caption">Sesiones asignadas actualmente.</span>
                 </article>
                 <article class="card card-kpi">
                     <span class="eyebrow">Asistentes</span>
                     <strong class="metric-value"><?php echo $total_asistentes; ?></strong>
+                    <span class="metric-caption">Reservas acumuladas en tus clases.</span>
                 </article>
             </section>
 
-            <section class="card" id="crear-clase">
-                <div class="panel-header">
-                    <div>
-                        <h3>Crear clase</h3>
-                    </div>
-                </div>
-
-                <form action="../app/controllers/crear_clase.php" method="POST" class="form-grid two-columns">
-                    <div class="field">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+            <section class="split-grid trainer-split">
+                <article class="card" id="crear-clase">
+                    <div class="panel-header">
+                        <div>
+                            <span class="eyebrow">Gestion</span>
+                            <h3>Crear nueva clase</h3>
+                            <p>Define los datos basicos de una nueva sesion y dejala lista para reservas.</p>
+                        </div>
                     </div>
 
-                    <div class="field">
-                        <label for="capacidad">Capacidad</label>
-                        <input type="number" id="capacidad" name="capacidad" min="1" placeholder="Capacidad" required>
+                    <form action="../app/controllers/crear_clase.php" method="POST" class="form-grid two-columns">
+                        <div class="field">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="capacidad">Capacidad</label>
+                            <input type="number" id="capacidad" name="capacidad" min="1" placeholder="Capacidad" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="descripcion">Descripcion</label>
+                            <input type="text" id="descripcion" name="descripcion" placeholder="Descripcion" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="fecha">Fecha y hora</label>
+                            <input type="datetime-local" id="fecha" name="fecha" required>
+                        </div>
+
+                        <div class="trainer-actions">
+                            <button type="submit" class="btn btn-primary">Crear clase</button>
+                        </div>
+                    </form>
+                </article>
+
+                <article class="card trainer-summary-card">
+                    <div class="panel-header">
+                        <div>
+                            <span class="eyebrow">Control</span>
+                            <h3>Resumen rapido</h3>
+                            <p>Accede a tus zonas de trabajo principales con una vista mas ordenada.</p>
+                        </div>
                     </div>
 
-                    <div class="field">
-                        <label for="descripcion">Descripcion</label>
-                        <input type="text" id="descripcion" name="descripcion" placeholder="Descripcion" required>
+                    <div class="stack trainer-summary-list">
+                        <div class="trainer-summary-item">
+                            <strong>Crear clase</strong>
+                            <p>Alta de nuevas sesiones con fecha, descripcion y capacidad.</p>
+                        </div>
+                        <div class="trainer-summary-item">
+                            <strong>Tus clases</strong>
+                            <p>Consulta asistentes, actualiza datos o elimina sesiones si lo necesitas.</p>
+                        </div>
+                        <div class="trainer-summary-item">
+                            <strong>Gestion diaria</strong>
+                            <p>Todo tu trabajo queda dividido en bloques claros y mas faciles de revisar.</p>
+                        </div>
                     </div>
-
-                    <div class="field">
-                        <label for="fecha">Fecha y hora</label>
-                        <input type="datetime-local" id="fecha" name="fecha" required>
-                    </div>
-
-                    <div class="trainer-actions">
-                        <button type="submit" class="btn btn-primary">Crear clase</button>
-                    </div>
-                </form>
+                </article>
             </section>
 
             <section class="card" id="mis-clases">
                 <div class="panel-header">
                     <div>
-                        <h3>Mis clases</h3>
+                        <span class="eyebrow">Tus clases</span>
+                        <h3>Clases asignadas</h3>
+                        <p>Revisa rapidamente la informacion principal de cada clase y sus asistentes.</p>
                     </div>
                 </div>
 

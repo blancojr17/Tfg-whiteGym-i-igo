@@ -2,9 +2,48 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    align-items: end;
+    margin-top: 4px;
 }
 
 .trainer-actions .btn,
 .trainer-actions button {
     min-width: 160px;
+}
+
+.trainer-split {
+    align-items: start;
+}
+
+.trainer-summary-card {
+    min-height: 100%;
+}
+
+.trainer-summary-list {
+    height: 100%;
+}
+
+.trainer-summary-item {
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.trainer-summary-item strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--text);
+}
+
+.trainer-summary-item p {
+    color: var(--text-muted);
+    margin: 0;
+}
+
+@media (max-width: 920px) {
+    .trainer-actions .btn,
+    .trainer-actions button {
+        width: 100%;
+    }
 }
