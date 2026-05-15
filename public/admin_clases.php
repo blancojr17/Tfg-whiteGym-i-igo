@@ -1,13 +1,19 @@
-<?php
+﻿<?php
+// gestion de clases desde admin
+// inicio de sesion
 session_start();
+// carga de archivos necesarios
 require_once __DIR__ . "/../config/conexion.php";
 
+// proteccion de acceso segun rol
 if (!isset($_SESSION["id_usuario"]) || !isset($_SESSION["email"]) || $_SESSION["rol"] !== "admin") {
+// redireccion final
     header("Location: login.php");
     exit;
 }
 
 $clases_globales = [];
+// preparacion de la consulta
 $stmt = $conexion->prepare("SELECT c.id_clase, c.nombre, c.descripcion, c.fecha, c.capacidad,
     CONCAT(COALESCE(u.nombre, ''), ' ', COALESCE(u.apellidos, '')) AS entrenador_nombre,
     COUNT(uc.id_usuario_clase) AS total_apuntados
@@ -16,24 +22,34 @@ $stmt = $conexion->prepare("SELECT c.id_clase, c.nombre, c.descripcion, c.fecha,
     LEFT JOIN usuarios_clases uc ON c.id_clase = uc.id_clase
     GROUP BY c.id_clase, c.nombre, c.descripcion, c.fecha, c.capacidad, u.nombre, u.apellidos
     ORDER BY c.fecha ASC");
+// comprobacion de la consulta
 if ($stmt) {
+// ejecucion de la consulta
     $stmt->execute();
     $resultado = $stmt->get_result();
+// lectura de resultados
     while ($fila = $resultado->fetch_assoc()) {
         $clases_globales[] = $fila;
     }
     $stmt->close();
 }
 
+// mensajes segun el resultado
 $mensaje_exito = "";
+// recogida de parametros de la url
 if (isset($_GET["ok"])) {
+// recogida de parametros de la url
     if ($_GET["ok"] === "admin_clase_actualizada") {
+// mensajes segun el resultado
         $mensaje_exito = "Clase actualizada correctamente.";
     }
+// recogida de parametros de la url
     if ($_GET["ok"] === "admin_clase_eliminada") {
+// mensajes segun el resultado
         $mensaje_exito = "Clase eliminada correctamente.";
     }
 }
+// recogida de parametros de la url
 $mensaje_error = isset($_GET["error"]) ? "No se pudo completar la operacion." : "";
 ?>
 <!DOCTYPE html>
@@ -51,11 +67,14 @@ $mensaje_error = isset($_GET["error"]) ? "No se pudo completar la operacion." : 
 
 <?php include __DIR__ . "/includes/topbar.php"; ?>
 
+<!-- estructura principal del panel -->
 <div class="dashboard-layout">
     <?php include __DIR__ . "/includes/sidebar_admin.php"; ?>
 
+<!-- contenido principal -->
     <main class="dashboard-main">
         <div class="page-shell">
+<!-- cabecera del contenido -->
             <div class="page-header">
                 <div>
                     <h2>Clases</h2>
@@ -70,9 +89,13 @@ $mensaje_error = isset($_GET["error"]) ? "No se pudo completar la operacion." : 
                 <p class="notice-error"><?php echo htmlspecialchars($mensaje_error); ?></p>
             <?php endif; ?>
 
+<!-- bloque principal de contenido -->
             <section class="card">
+<!-- contenedor de la tabla -->
                 <div class="table-wrap">
+<!-- tabla de datos -->
                     <table>
+<!-- cabecera de la tabla -->
                         <thead>
                             <tr>
                                 <th>Nombre</th>
@@ -84,6 +107,7 @@ $mensaje_error = isset($_GET["error"]) ? "No se pudo completar la operacion." : 
                                 <th>Acciones</th>
                             </tr>
                         </thead>
+<!-- contenido de la tabla -->
                         <tbody>
                             <?php foreach ($clases_globales as $clase): ?>
                                 <tr>
@@ -96,6 +120,7 @@ $mensaje_error = isset($_GET["error"]) ? "No se pudo completar la operacion." : 
                                     <td>
                                         <div class="table-actions">
                                             <a href="admin_editar_clase.php?id_clase=<?php echo (int) ($clase["id_clase"] ?? 0); ?>" class="btn btn-secondary">Editar</a>
+<!-- formulario principal -->
                                             <form action="../app/controllers/admin_eliminar_clase.php" method="POST" class="inline-actions">
                                                 <input type="hidden" name="id_clase" value="<?php echo (int) ($clase["id_clase"] ?? 0); ?>">
                                                 <button type="submit">Eliminar</button>
@@ -114,3 +139,4 @@ $mensaje_error = isset($_GET["error"]) ? "No se pudo completar la operacion." : 
 
 </body>
 </html>
+

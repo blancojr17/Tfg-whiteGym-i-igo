@@ -1,4 +1,6 @@
 ﻿<?php
+// prueba simple de conexion
+// carga de archivos necesarios
 require_once __DIR__ . "/../config/conexion.php";
 ?>
 <!DOCTYPE html>
@@ -13,3 +15,4 @@ require_once __DIR__ . "/../config/conexion.php";
     <p>La conexion con la base de datos se ha realizado correctamente.</p>
 </body>
 </html>
+

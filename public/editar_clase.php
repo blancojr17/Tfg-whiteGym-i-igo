@@ -1,38 +1,51 @@
 ﻿<?php
+// formulario para editar una clase
+// inicio de sesion
 session_start();
+// carga de archivos necesarios
 require_once __DIR__ . "/../config/conexion.php";
 
+// proteccion de acceso segun rol
 if (!isset($_SESSION["id_usuario"]) || !isset($_SESSION["email"]) || $_SESSION["rol"] !== "entrenador") {
+// redireccion final
     header("Location: login.php");
     exit;
 }
 
 $id_entrenador = (int) $_SESSION["id_usuario"];
+// recogida de parametros de la url
 $id_clase = (int) ($_GET["id_clase"] ?? 0);
 
 if ($id_clase <= 0) {
+// redireccion final
     header("Location: entrenador.php?error=clase");
     exit;
 }
 
+// consulta sql
 $sql = "SELECT id_clase, nombre, descripcion, fecha, capacidad
         FROM clases
         WHERE id_clase = ? AND id_entrenador = ?
         LIMIT 1";
+// preparacion de la consulta
 $stmt = $conexion->prepare($sql);
 
 if (!$stmt) {
+// redireccion final
     header("Location: entrenador.php?error=1");
     exit;
 }
 
 $stmt->bind_param("ii", $id_clase, $id_entrenador);
+// ejecucion de la consulta
 $stmt->execute();
 $resultado = $stmt->get_result();
+// lectura de resultados
 $clase = $resultado ? $resultado->fetch_assoc() : null;
 $stmt->close();
 
 if (!$clase) {
+// redireccion final
     header("Location: entrenador.php?error=permiso");
     exit;
 }
@@ -57,15 +70,20 @@ if (!empty($clase["fecha"])) {
 
 <?php include __DIR__ . "/includes/topbar.php"; ?>
 
+<!-- estructura principal del panel -->
 <div class="dashboard-layout">
     <?php include __DIR__ . "/includes/sidebar_entrenador.php"; ?>
 
+<!-- contenido principal -->
     <main class="dashboard-main">
+<!-- cabecera del contenido -->
         <div class="page-header">
             <h2>Editar clase</h2>
         </div>
 
+<!-- bloque principal de contenido -->
         <section class="card">
+<!-- formulario principal -->
             <form action="../app/controllers/actualizar_clase.php" method="POST" class="inline">
                 <input type="hidden" name="id_clase" value="<?php echo (int) $clase["id_clase"]; ?>">
                 <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($clase["nombre"]); ?>" required>
@@ -81,3 +99,4 @@ if (!empty($clase["fecha"])) {
 
 </body>
 </html>
+

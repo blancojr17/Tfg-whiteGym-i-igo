@@ -1,17 +1,24 @@
-<?php
+﻿<?php
+// listado de planes disponibles
+// inicio de sesion
 session_start();
+// carga de archivos necesarios
 require_once __DIR__ . "/../config/conexion.php";
 
+// proteccion de acceso segun rol
 if (!isset($_SESSION["id_usuario"]) || $_SESSION["rol"] !== "usuario") {
+// redireccion final
     header("Location: login.php");
     exit;
 }
 
 $id_usuario = (int) $_SESSION["id_usuario"];
 $planes = [];
+// mensajes segun el resultado
 $error_planes = false;
 $plan_actual = null;
 
+// consulta sql
 $sqlPlanActual = "SELECT up.id_usuario_plan, up.id_plan, up.fecha_fin, up.usos_restantes, p.nombre, p.tipo, p.precio
                   FROM usuarios_planes up
                   INNER JOIN planes p ON up.id_plan = p.id_plan
@@ -23,23 +30,30 @@ $sqlPlanActual = "SELECT up.id_usuario_plan, up.id_plan, up.fecha_fin, up.usos_r
                     )
                   ORDER BY up.fecha_inicio DESC, up.id_usuario_plan DESC
                   LIMIT 1";
+// preparacion de la consulta
 $stmtPlanActual = $conexion->prepare($sqlPlanActual);
+// comprobacion de la consulta
 if ($stmtPlanActual) {
     $stmtPlanActual->bind_param("i", $id_usuario);
+// ejecucion de la consulta
     $stmtPlanActual->execute();
     $resultadoPlanActual = $stmtPlanActual->get_result();
+// lectura de resultados
     $plan_actual = $resultadoPlanActual ? $resultadoPlanActual->fetch_assoc() : null;
     $stmtPlanActual->close();
 }
 
+// consulta sql
 $sql = "SELECT * FROM planes WHERE activo = 1 ORDER BY tipo ASC, precio ASC";
 $resultado = $conexion->query($sql);
 
 if ($resultado) {
+// lectura de resultados
     while ($fila = $resultado->fetch_assoc()) {
         $planes[] = $fila;
     }
 } else {
+// mensajes segun el resultado
     $error_planes = true;
 }
 
@@ -79,11 +93,14 @@ function beneficios_plan(array $plan): array
 
 <?php include __DIR__ . "/includes/topbar.php"; ?>
 
+<!-- estructura principal del panel -->
 <div class="dashboard-layout">
     <?php include __DIR__ . "/includes/sidebar_cliente.php"; ?>
 
+<!-- contenido principal -->
     <main class="dashboard-main">
         <div class="page-shell">
+<!-- cabecera del contenido -->
             <div class="page-header">
                 <div>
                     <span class="eyebrow">Planes activos</span>
@@ -100,7 +117,9 @@ function beneficios_plan(array $plan): array
                 <p class="notice-error">No se ha podido completar la operacion.</p>
             <?php endif; ?>
 
+<!-- bloque principal de contenido -->
             <section class="card">
+<!-- cabecera del bloque -->
                 <div class="panel-header">
                     <div>
                         <h3>Plan actual</h3>
@@ -131,16 +150,19 @@ function beneficios_plan(array $plan): array
             <?php elseif (empty($planes)): ?>
                 <div class="empty-state">No hay planes disponibles en este momento.</div>
             <?php else: ?>
+<!-- bloque principal de contenido -->
                 <section class="grid-cards plans-grid">
                     <?php foreach ($planes as $indice => $plan): ?>
                         <?php
                         $beneficios = beneficios_plan($plan);
                         $es_destacado = $indice === 1;
                         $es_actual = $plan_actual && (int) ($plan_actual["id_plan"] ?? 0) === (int) ($plan["id_plan"] ?? 0);
+// mensajes segun el resultado
                         $mensaje_confirmacion = $plan_actual
-                            ? "¿Seguro que quieres cambiar tu plan actual por " . addslashes((string) ($plan["nombre"] ?? "este plan")) . "?"
-                            : "¿Seguro que quieres contratar " . addslashes((string) ($plan["nombre"] ?? "este plan")) . "?";
+                            ? "Â¿Seguro que quieres cambiar tu plan actual por " . addslashes((string) ($plan["nombre"] ?? "este plan")) . "?"
+                            : "Â¿Seguro que quieres contratar " . addslashes((string) ($plan["nombre"] ?? "este plan")) . "?";
                         ?>
+<!-- tarjeta de contenido -->
                         <article class="card plan-card<?php echo $es_destacado ? " featured" : ""; ?>">
                             <div class="plan-card-header">
                                 <div>
@@ -165,6 +187,7 @@ function beneficios_plan(array $plan): array
                                 <?php endforeach; ?>
                             </ul>
 
+<!-- formulario principal -->
                             <form action="../app/controllers/contratar_plan.php" method="post" class="plan-card-form" onsubmit="return confirm('<?php echo htmlspecialchars($mensaje_confirmacion, ENT_QUOTES, 'UTF-8'); ?>');">
                                 <input type="hidden" name="id_plan" value="<?php echo (int) ($plan["id_plan"] ?? 0); ?>">
                                 <button type="submit" class="btn btn-primary"><?php echo $plan_actual ? "Cambiar plan" : "Contratar"; ?></button>
@@ -179,3 +202,4 @@ function beneficios_plan(array $plan): array
 
 </body>
 </html>
+

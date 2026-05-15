@@ -1,5 +1,7 @@
+﻿/* estilos base de la pagina principal */
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
 
+/* reinicio basico de estilos */
 * {
     margin: 0;
     padding: 0;
@@ -11,6 +13,7 @@ html {
     scroll-padding-top: 96px;
 }
 
+/* estilos generales de la pagina */
 body {
     background-color: #000000;
     color: #ffffff;
@@ -34,17 +37,25 @@ h2 {
 
 p,
 li,
+/* estilos de formularios */
 input,
+/* estilos de formularios */
 select,
+/* estilos de formularios */
 textarea,
+/* estilos de botones */
 button,
 a {
     font-family: inherit;
 }
 
+/* estilos de botones */
 button,
+/* estilos de formularios */
 input,
+/* estilos de formularios */
 select,
+/* estilos de formularios */
 textarea {
     min-width: 0;
 }
@@ -64,30 +75,36 @@ textarea {
     color: #ffffff;
 }
 
+/* mensajes de estado */
 .mensaje-exito {
     margin-top: 15px;
     color: #6fdc6f;
     font-size: 14px;
 }
 
+/* mensajes de estado */
 .mensaje-exito.error {
     color: #e29494;
 }
 
+/* media query para movil */
 @media (max-width: 1024px) {
     .contenedor {
         padding: 44px 24px;
     }
 }
 
+/* media query para movil */
 @media (max-width: 768px) {
     .contenedor {
         padding: 40px 18px;
     }
 }
 
+/* media query para movil */
 @media (max-width: 640px) {
     .contenedor {
         padding: 36px 16px;
     }
 }
+

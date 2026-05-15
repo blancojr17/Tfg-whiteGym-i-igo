@@ -1,3 +1,4 @@
+﻿/* estilos del panel de entrenador */
 .trainer-actions {
     display: flex;
     flex-wrap: wrap;
@@ -41,9 +42,11 @@
     margin: 0;
 }
 
+/* media query para movil */
 @media (max-width: 920px) {
     .trainer-actions .btn,
     .trainer-actions button {
         width: 100%;
     }
 }
+

@@ -1,17 +1,25 @@
-<?php
+﻿<?php
+// listado y gestion de usuarios
+// inicio de sesion
 session_start();
+// carga de archivos necesarios
 require_once __DIR__ . "/../config/conexion.php";
 
+// proteccion de acceso segun rol
 if (!isset($_SESSION["id_usuario"]) || !isset($_SESSION["email"]) || $_SESSION["rol"] !== "admin") {
+// redireccion final
     header("Location: login.php");
     exit;
 }
 
 $id_admin_actual = (int) $_SESSION["id_usuario"];
+// recogida de parametros de la url
 $q = trim((string) ($_GET["q"] ?? ""));
+// recogida de parametros de la url
 $rol_filtro = (string) ($_GET["rol"] ?? "todos");
 $roles_validos = ["todos", "usuario", "entrenador", "admin"];
 $rol_filtro = in_array($rol_filtro, $roles_validos, true) ? $rol_filtro : "todos";
+// recogida de parametros de la url
 $pagina = max(1, (int) ($_GET["page"] ?? 1));
 $por_pagina = 10;
 $offset = ($pagina - 1) * $por_pagina;
@@ -53,12 +61,17 @@ $where_sql = $where ? " WHERE " . implode(" AND ", $where) : "";
 $total_usuarios = 0;
 $usuarios = [];
 
+// consulta sql
 $sqlTotal = "SELECT COUNT(*) AS total FROM usuarios u" . $where_sql;
+// preparacion de la consulta
 $stmtTotal = $conexion->prepare($sqlTotal);
+// comprobacion de la consulta
 if ($stmtTotal) {
     bind_dynamic_params($stmtTotal, $types, $params);
+// ejecucion de la consulta
     $stmtTotal->execute();
     $resultadoTotal = $stmtTotal->get_result();
+// lectura de resultados
     $filaTotal = $resultadoTotal ? $resultadoTotal->fetch_assoc() : null;
     $total_usuarios = (int) ($filaTotal["total"] ?? 0);
     $stmtTotal->close();
@@ -70,6 +83,7 @@ if ($pagina > $total_paginas) {
     $offset = ($pagina - 1) * $por_pagina;
 }
 
+// consulta sql
 $sqlUsuarios = "SELECT u.id_usuario,
                        u.nombre,
                        u.apellidos,
@@ -98,15 +112,19 @@ $sqlUsuarios = "SELECT u.id_usuario,
                 " . $where_sql . "
                 ORDER BY u.id_usuario DESC
                 LIMIT ?, ?";
+// preparacion de la consulta
 $stmtUsuarios = $conexion->prepare($sqlUsuarios);
+// comprobacion de la consulta
 if ($stmtUsuarios) {
     $types_data = $types . "ii";
     $params_data = $params;
     $params_data[] = $offset;
     $params_data[] = $por_pagina;
     bind_dynamic_params($stmtUsuarios, $types_data, $params_data);
+// ejecucion de la consulta
     $stmtUsuarios->execute();
     $resultadoUsuarios = $stmtUsuarios->get_result();
+// lectura de resultados
     while ($fila = $resultadoUsuarios->fetch_assoc()) {
         $usuarios[] = $fila;
     }
@@ -119,7 +137,9 @@ $query_contexto = http_build_query([
     "page" => $pagina
 ]);
 
+// recogida de parametros de la url
 $mensaje_exito = (isset($_GET["ok"]) && $_GET["ok"] === "actualizado") ? "Usuario actualizado correctamente." : "";
+// recogida de parametros de la url
 $mensaje_error = isset($_GET["error"]) ? "No se pudo completar la operacion." : "";
 
 function build_page_url(int $page, string $q, string $rol): string
@@ -149,11 +169,14 @@ function build_page_url(int $page, string $q, string $rol): string
 
 <?php include __DIR__ . "/includes/topbar.php"; ?>
 
+<!-- estructura principal del panel -->
 <div class="dashboard-layout">
     <?php include __DIR__ . "/includes/sidebar_admin.php"; ?>
 
+<!-- contenido principal -->
     <main class="dashboard-main">
         <div class="page-shell">
+<!-- cabecera del contenido -->
             <div class="page-header">
                 <div>
                     <h2>Usuarios</h2>
@@ -172,6 +195,7 @@ function build_page_url(int $page, string $q, string $rol): string
 
             <?php include __DIR__ . "/includes/admin/tabla_usuarios.php"; ?>
 
+<!-- seccion de contenido -->
             <section class="pagination">
                 <span class="muted">Mostrando <?php echo count($usuarios); ?> de <?php echo $total_usuarios; ?> usuarios</span>
                 <div class="pagination-links">
@@ -243,3 +267,4 @@ document.addEventListener("keydown", (event) => {
 
 </body>
 </html>
+

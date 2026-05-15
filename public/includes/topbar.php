@@ -1,7 +1,9 @@
-<?php
+﻿<?php
+// barra superior comun
 $nombre_usuario = htmlspecialchars($_SESSION["nombre"] ?? "Usuario");
 $rol_usuario = htmlspecialchars($_SESSION["rol"] ?? "");
 ?>
+<!-- cabecera de la pagina -->
 <header class="topbar">
     <a href="index.php" class="topbar-brand" aria-label="Ir al inicio de WhiteGym">
         <img src="assets/img/logo.png" alt="Logo WhiteGym" class="topbar-logo">
@@ -18,3 +20,4 @@ $rol_usuario = htmlspecialchars($_SESSION["rol"] ?? "");
         <a href="../app/controllers/logout.php" class="btn-logout">Cerrar sesion</a>
     </div>
 </header>
+

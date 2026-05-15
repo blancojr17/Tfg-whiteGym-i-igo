@@ -1,3 +1,5 @@
+﻿/* estilos de la seccion de clases */
+/* seccion de clases */
 .clases {
     width: 100%;
     padding: 50px;
@@ -5,6 +7,7 @@
     background-color: #181818;
 }
 
+/* seccion de clases */
 .clases h1 {
     color: #fff;
 }
@@ -15,6 +18,7 @@
     margin-bottom: 50px;
 }
 
+/* seccion de clases */
 .grid-clases {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -22,6 +26,7 @@
     justify-content: center;
 }
 
+/* tarjetas y paneles */
 .tarjeta-clase {
     background: #222;
     padding: 25px;
@@ -32,11 +37,13 @@
     transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
+/* tarjetas y paneles */
 .tarjeta-clase:hover {
     transform: scale(1.015);
     border-color: #c76719;
 }
 
+/* seccion de clases */
 .nivel {
     position: absolute;
     top: 20px;
@@ -60,39 +67,48 @@
     margin-bottom: 15px;
 }
 
+/* tarjetas y paneles */
 .tarjeta-clase h2 {
     margin: 0 0 8px;
     color: #fff;
 }
 
+/* tarjetas y paneles */
 .tarjeta-clase hr {
     border: none;
     border-top: 1px solid #333;
     margin: 15px 0;
 }
 
+/* tarjetas y paneles */
 .tarjeta-clase p {
     color: #8d8b8b;
     font-size: 14px;
     margin: 6px 0;
 }
 
+/* media query para movil */
 @media (max-width: 1024px) {
+/* seccion de clases */
     .clases {
         padding: 44px 24px;
     }
 
+/* seccion de clases */
     .grid-clases {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 20px;
     }
 }
 
+/* media query para movil */
 @media (max-width: 768px) {
+/* seccion de clases */
     .clases {
         padding: 40px 18px;
     }
 
+/* seccion de clases */
     .grid-clases {
         grid-template-columns: 1fr;
         gap: 18px;
@@ -100,23 +116,29 @@
         margin: 0 auto;
     }
 
+/* tarjetas y paneles */
     .tarjeta-clase {
         padding: 22px 20px;
     }
 }
 
+/* media query para movil */
 @media (max-width: 640px) {
+/* seccion de clases */
     .clases {
         padding: 36px 16px;
     }
 
+/* tarjetas y paneles */
     .tarjeta-clase {
         padding: 18px;
     }
 
+/* seccion de clases */
     .nivel {
         position: static;
         display: inline-flex;
         margin-bottom: 14px;
     }
 }
+

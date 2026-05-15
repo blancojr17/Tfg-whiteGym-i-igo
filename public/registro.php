@@ -1,17 +1,22 @@
 ﻿<?php
+// pantalla de registro de usuarios
+// inicio de sesion
 session_start();
 
 if (isset($_SESSION["id_usuario"], $_SESSION["rol"])) {
     if ($_SESSION["rol"] === "admin") {
+// redireccion final
         header("Location: admin.php");
         exit;
     }
 
     if ($_SESSION["rol"] === "entrenador") {
+// redireccion final
         header("Location: entrenador.php");
         exit;
     }
 
+// redireccion final
     header("Location: cliente.php");
     exit;
 }
@@ -33,6 +38,7 @@ if (isset($_SESSION["id_usuario"], $_SESSION["rol"])) {
 
         <h1>Crear cuenta</h1>
 
+<!-- formulario principal -->
         <form class="formulario-acceso formulario-acceso-registro" action="../app/controllers/procesar_registro.php" method="post">
             <input type="text" name="nombre" placeholder="Nombre" required autocomplete="given-name">
             <input type="text" name="apellidos" placeholder="Apellidos" required autocomplete="family-name">
@@ -71,3 +77,4 @@ if (isset($_SESSION["id_usuario"], $_SESSION["rol"])) {
 
 </body>
 </html>
+

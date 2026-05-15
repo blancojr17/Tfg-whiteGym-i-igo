@@ -1,3 +1,4 @@
+﻿<?php // modal de detalle y edicion de usuario ?>
 <div class="modal-backdrop" id="user-modal-backdrop">
     <div class="modal modal-user">
         <div class="modal-header">
@@ -6,6 +7,7 @@
             </div>
         </div>
 
+<!-- formulario principal -->
         <form action="../app/controllers/gestionar_usuario.php" method="POST" id="user-modal-form">
             <input type="hidden" name="id_usuario" id="modal-id-usuario">
             <input type="hidden" name="redirect_query" value="<?php echo htmlspecialchars($query_contexto, ENT_QUOTES, 'UTF-8'); ?>">
@@ -88,3 +90,4 @@
         </form>
     </div>
 </div>
+

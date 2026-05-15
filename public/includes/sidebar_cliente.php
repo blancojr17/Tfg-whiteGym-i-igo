@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+// menu lateral del usuario
 $pagina_actual = basename($_SERVER["PHP_SELF"] ?? "");
 ?>
 <aside class="sidebar sidebar-cliente">
@@ -7,6 +8,7 @@ $pagina_actual = basename($_SERVER["PHP_SELF"] ?? "");
         <h3 class="sidebar-title">Area cliente</h3>
         <p class="sidebar-copy">Tu actividad, tu plan y tu progreso en un solo panel.</p>
     </div>
+<!-- menu principal -->
     <nav>
         <a href="cliente.php" class="<?php echo $pagina_actual === "cliente.php" ? "active" : ""; ?>">Dashboard</a>
         <a href="perfil.php" class="<?php echo $pagina_actual === "perfil.php" ? "active" : ""; ?>">Perfil</a>
@@ -17,3 +19,4 @@ $pagina_actual = basename($_SERVER["PHP_SELF"] ?? "");
         <a href="asistencia.php" class="<?php echo $pagina_actual === "asistencia.php" ? "active" : ""; ?>">Asistencia</a>
     </nav>
 </aside>
+

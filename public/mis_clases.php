@@ -1,16 +1,23 @@
-<?php
+﻿<?php
+// clases reservadas del usuario
+// inicio de sesion
 session_start();
+// carga de archivos necesarios
 require_once __DIR__ . "/../config/conexion.php";
 
+// proteccion de acceso segun rol
 if (!isset($_SESSION["id_usuario"]) || $_SESSION["rol"] !== "usuario") {
+// redireccion final
     header("Location: login.php");
     exit;
 }
 
 $id_usuario = (int) $_SESSION["id_usuario"];
 $mis_clases = [];
+// mensajes segun el resultado
 $error_clases = false;
 
+// consulta sql
 $sql = "SELECT c.id_clase,
                c.nombre,
                c.descripcion,
@@ -26,18 +33,23 @@ $sql = "SELECT c.id_clase,
         GROUP BY c.id_clase, c.nombre, c.descripcion, c.fecha, c.capacidad, e.nombre, e.apellidos
         ORDER BY c.fecha ASC";
 
+// preparacion de la consulta
 $stmt = $conexion->prepare($sql);
+// comprobacion de la consulta
 if ($stmt) {
     $stmt->bind_param("i", $id_usuario);
+// ejecucion de la consulta
     $stmt->execute();
     $resultado = $stmt->get_result();
 
+// lectura de resultados
     while ($fila = $resultado->fetch_assoc()) {
         $mis_clases[] = $fila;
     }
 
     $stmt->close();
 } else {
+// mensajes segun el resultado
     $error_clases = true;
 }
 ?>
@@ -56,11 +68,14 @@ if ($stmt) {
 
 <?php include __DIR__ . "/includes/topbar.php"; ?>
 
+<!-- estructura principal del panel -->
 <div class="dashboard-layout">
     <?php include __DIR__ . "/includes/sidebar_cliente.php"; ?>
 
+<!-- contenido principal -->
     <main class="dashboard-main">
         <div class="page-shell">
+<!-- cabecera del contenido -->
             <div class="page-header">
                 <div>
                     <span class="eyebrow">Mis reservas</span>
@@ -77,6 +92,7 @@ if ($stmt) {
             <?php elseif (empty($mis_clases)): ?>
                 <div class="empty-state">Todavia no tienes clases reservadas.</div>
             <?php else: ?>
+<!-- bloque principal de contenido -->
                 <section class="grid-cards">
                     <?php foreach ($mis_clases as $clase): ?>
                         <?php
@@ -85,11 +101,14 @@ if ($stmt) {
                         $ocupadas = (int) ($clase["plazas_ocupadas"] ?? 0);
                         $ocupacion = $capacidad > 0 ? min(100, (int) round(($ocupadas / $capacidad) * 100)) : 0;
                         $plazas_restantes = max(0, $capacidad - $ocupadas);
+// mensajes segun el resultado
                         $estado_ocupacion = "low";
 
                         if ($ocupacion > 80) {
+// mensajes segun el resultado
                             $estado_ocupacion = "high";
                         } elseif ($ocupacion > 50) {
+// mensajes segun el resultado
                             $estado_ocupacion = "medium";
                         }
 
@@ -101,7 +120,9 @@ if ($stmt) {
                             $texto_plazas = "Quedan " . $plazas_restantes . " plazas";
                         }
                         ?>
+<!-- tarjeta de contenido -->
                         <article class="card">
+<!-- cabecera del bloque -->
                             <div class="panel-header">
                                 <div>
                                     <h3><?php echo htmlspecialchars($clase["nombre"] ?? ""); ?></h3>
@@ -127,6 +148,7 @@ if ($stmt) {
                                 <p class="class-occupancy-copy"><?php echo htmlspecialchars($texto_plazas); ?></p>
                             </div>
 
+<!-- formulario principal -->
                             <form action="../app/controllers/gestionar_clase.php" method="POST" class="inline-actions">
                                 <input type="hidden" name="id_clase" value="<?php echo (int) ($clase["id_clase"] ?? 0); ?>">
                                 <input type="hidden" name="accion" value="desapuntar">
@@ -143,3 +165,4 @@ if ($stmt) {
 
 </body>
 </html>
+

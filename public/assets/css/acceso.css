@@ -1,5 +1,7 @@
+﻿/* estilos de login y registro */
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
 
+/* reinicio basico de estilos */
 * {
     margin: 0;
     padding: 0;
@@ -31,17 +33,20 @@
     font-size: 22px;
 }
 
+/* estilos de formularios */
 .formulario-acceso {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
+/* estilos de formularios */
 .formulario-acceso-registro {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/* estilos de formularios */
 .formulario-acceso-registro button {
     grid-column: 1 / -1;
 }
@@ -50,7 +55,9 @@
     max-width: 520px;
 }
 
+/* estilos de formularios */
 .formulario-acceso input,
+/* estilos de formularios */
 .formulario-acceso select {
     padding: 10px;
     background-color: #111;
@@ -59,6 +66,7 @@
     color: #fff;
 }
 
+/* estilos de formularios */
 .formulario-acceso button {
     margin-top: 10px;
     padding: 10px;
@@ -97,8 +105,11 @@
     transform: scale(1.1);
 }
 
+/* media query para movil */
 @media (max-width: 640px) {
+/* estilos de formularios */
     .formulario-acceso-registro {
         grid-template-columns: 1fr;
     }
 }
+

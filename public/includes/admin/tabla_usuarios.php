@@ -1,9 +1,14 @@
+﻿<?php // tabla con el listado de usuarios ?>
+<!-- bloque principal de contenido -->
 <section class="card">
     <?php if (empty($usuarios)): ?>
         <div class="empty-state">No hay usuarios para los filtros seleccionados.</div>
     <?php else: ?>
+<!-- contenedor de la tabla -->
         <div class="table-wrap">
+<!-- tabla de datos -->
             <table class="admin-users-table">
+<!-- cabecera de la tabla -->
                 <thead>
                     <tr>
                         <th>Usuario</th>
@@ -12,6 +17,7 @@
                         <th>Accion</th>
                     </tr>
                 </thead>
+<!-- contenido de la tabla -->
                 <tbody>
                     <?php foreach ($usuarios as $usuario): ?>
                         <?php
@@ -61,3 +67,4 @@
         </div>
     <?php endif; ?>
 </section>
+

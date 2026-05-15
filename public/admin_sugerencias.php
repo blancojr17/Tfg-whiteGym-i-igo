@@ -1,15 +1,23 @@
-<?php
+﻿<?php
+// revision de sugerencias en admin
+// inicio de sesion
 session_start();
+// carga de archivos necesarios
 require_once __DIR__ . "/../config/conexion.php";
 
+// proteccion de acceso segun rol
 if (!isset($_SESSION["id_usuario"]) || !isset($_SESSION["email"]) || $_SESSION["rol"] !== "admin") {
+// redireccion final
     header("Location: login.php");
     exit;
 }
 
+// recogida de parametros de la url
 $estado_filtro = (string) ($_GET["estado"] ?? "todos");
 $estados_validos = ["todos", "pendiente", "leido"];
+// mensajes segun el resultado
 $estado_filtro = in_array($estado_filtro, $estados_validos, true) ? $estado_filtro : "todos";
+// recogida de parametros de la url
 $pagina = max(1, (int) ($_GET["page"] ?? 1));
 $por_pagina = 10;
 $offset = ($pagina - 1) * $por_pagina;
@@ -26,20 +34,27 @@ if ($estado_filtro !== "todos") {
 
 $total_sugerencias = 0;
 $sugerencias = [];
+// mensajes segun el resultado
 $error_datos = false;
 
+// consulta sql
 $sqlTotal = "SELECT COUNT(*) AS total FROM sugerencias" . $where_sql;
+// preparacion de la consulta
 $stmtTotal = $conexion->prepare($sqlTotal);
+// comprobacion de la consulta
 if ($stmtTotal) {
     if ($estado_filtro !== "todos") {
         $stmtTotal->bind_param("s", $estado_filtro);
     }
+// ejecucion de la consulta
     $stmtTotal->execute();
     $resultadoTotal = $stmtTotal->get_result();
+// lectura de resultados
     $filaTotal = $resultadoTotal ? $resultadoTotal->fetch_assoc() : null;
     $total_sugerencias = (int) ($filaTotal["total"] ?? 0);
     $stmtTotal->close();
 } else {
+// mensajes segun el resultado
     $error_datos = true;
 }
 
@@ -49,24 +64,30 @@ if ($pagina > $total_paginas) {
     $offset = ($pagina - 1) * $por_pagina;
 }
 
+// consulta sql
 $sqlSugerencias = "SELECT id_sugerencia, nombre, email, mensaje, fecha, estado
                    FROM sugerencias" . $where_sql . "
                    ORDER BY fecha DESC, id_sugerencia DESC
                    LIMIT ?, ?";
+// preparacion de la consulta
 $stmtSugerencias = $conexion->prepare($sqlSugerencias);
+// comprobacion de la consulta
 if ($stmtSugerencias) {
     if ($estado_filtro === "todos") {
         $stmtSugerencias->bind_param("ii", $offset, $por_pagina);
     } else {
         $stmtSugerencias->bind_param("sii", $estado_filtro, $offset, $por_pagina);
     }
+// ejecucion de la consulta
     $stmtSugerencias->execute();
     $resultadoSugerencias = $stmtSugerencias->get_result();
+// lectura de resultados
     while ($fila = $resultadoSugerencias->fetch_assoc()) {
         $sugerencias[] = $fila;
     }
     $stmtSugerencias->close();
 } else {
+// mensajes segun el resultado
     $error_datos = true;
 }
 
@@ -75,7 +96,9 @@ $query_contexto = http_build_query([
     "page" => $pagina
 ]);
 
+// recogida de parametros de la url
 $mensaje_exito = (isset($_GET["ok"]) && $_GET["ok"] === "actualizada") ? "Sugerencia actualizada correctamente." : "";
+// recogida de parametros de la url
 $mensaje_error = isset($_GET["error"]) ? "No se pudo completar la operacion." : "";
 
 function build_sugerencias_page_url(int $page, string $estado): string
@@ -102,11 +125,14 @@ function build_sugerencias_page_url(int $page, string $estado): string
 
 <?php include __DIR__ . "/includes/topbar.php"; ?>
 
+<!-- estructura principal del panel -->
 <div class="dashboard-layout">
     <?php include __DIR__ . "/includes/sidebar_admin.php"; ?>
 
+<!-- contenido principal -->
     <main class="dashboard-main">
         <div class="page-shell">
+<!-- cabecera del contenido -->
             <div class="page-header">
                 <div>
                     <h2>Sugerencias</h2>
@@ -125,7 +151,9 @@ function build_sugerencias_page_url(int $page, string $estado): string
                 <p class="notice-error">No se pudieron cargar las sugerencias. Revisa si la tabla ya existe en la base de datos.</p>
             <?php endif; ?>
 
+<!-- bloque principal de contenido -->
             <section class="card">
+<!-- formulario principal -->
                 <form method="GET" class="toolbar">
                     <div class="field">
                         <label for="estado">Estado</label>
@@ -142,12 +170,16 @@ function build_sugerencias_page_url(int $page, string $estado): string
                 </form>
             </section>
 
+<!-- bloque principal de contenido -->
             <section class="card">
                 <?php if (empty($sugerencias)): ?>
                     <div class="empty-state">No hay sugerencias para los filtros seleccionados.</div>
                 <?php else: ?>
+<!-- contenedor de la tabla -->
                     <div class="table-wrap">
+<!-- tabla de datos -->
                         <table>
+<!-- cabecera de la tabla -->
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
@@ -158,6 +190,7 @@ function build_sugerencias_page_url(int $page, string $estado): string
                                     <th>Accion</th>
                                 </tr>
                             </thead>
+<!-- contenido de la tabla -->
                             <tbody>
                                 <?php foreach ($sugerencias as $sugerencia): ?>
                                     <?php $estado = (string) ($sugerencia["estado"] ?? "pendiente"); ?>
@@ -173,6 +206,7 @@ function build_sugerencias_page_url(int $page, string $estado): string
                                         </td>
                                         <td>
                                             <?php if ($estado === "pendiente"): ?>
+<!-- formulario principal -->
                                                 <form action="../app/controllers/gestionar_sugerencia.php" method="POST" class="inline-actions">
                                                     <input type="hidden" name="accion" value="marcar_leido">
                                                     <input type="hidden" name="id_sugerencia" value="<?php echo (int) ($sugerencia["id_sugerencia"] ?? 0); ?>">
@@ -191,6 +225,7 @@ function build_sugerencias_page_url(int $page, string $estado): string
                 <?php endif; ?>
             </section>
 
+<!-- seccion de contenido -->
             <section class="pagination">
                 <span class="muted">Mostrando <?php echo count($sugerencias); ?> de <?php echo $total_sugerencias; ?> sugerencias</span>
                 <div class="pagination-links">
@@ -215,3 +250,4 @@ function build_sugerencias_page_url(int $page, string $estado): string
 
 </body>
 </html>
+

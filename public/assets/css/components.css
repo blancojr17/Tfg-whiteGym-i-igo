@@ -1,8 +1,11 @@
+﻿/* estilos comunes de componentes */
+/* estilos de botones */
 .btn, button, .btn-logout, .badge, .status-pill, .modal-actions, .page-actions, .inline-actions, .table-actions, .quick-links {
     display: inline-flex;
     align-items: center;
 }
 
+/* tarjetas y paneles */
 .card, .table-wrap, .notice-ok, .notice-error, .empty-state, .list-simple li, .modal {
     background: var(--panel-bg);
 }
@@ -17,6 +20,7 @@
     text-transform: uppercase;
 }
 
+/* tarjetas y paneles */
 .card {
     padding: 22px;
     border: 1px solid var(--line);
@@ -24,43 +28,61 @@
     box-shadow: var(--shadow-soft);
 }
 
+/* tarjetas y paneles */
 .card:hover { border-color: var(--line-strong); }
+/* tarjetas y paneles */
 .card h3 { margin-bottom: 10px; font-size: 1.02rem; }
+/* tarjetas y paneles */
 .card p + p { margin-top: 8px; }
+/* tarjetas de estadisticas */
 .card-kpi { position: relative; overflow: hidden; }
+/* tarjetas y paneles */
 .panel-header { margin-bottom: 16px; }
+/* tarjetas y paneles */
 .panel-header p,
+/* estilos de formularios */
 .field label,
 .muted,
+/* mensajes de estado */
 .empty-state,
+/* estilos de tablas */
 tbody td,
 .modal-meta {
     color: var(--text-muted);
 }
 
+/* tarjetas y paneles */
 .panel-header p,
+/* estilos de formularios */
 .field label,
 .modal-meta {
     font-size: 0.92rem;
 }
 
+/* tarjetas de estadisticas */
 .metric-value { display: block; margin: 8px 0 6px; font-size: 1.85rem; line-height: 1.1; }
+/* tarjetas de estadisticas */
 .metric-caption { font-size: 0.88rem; }
+/* tarjetas de estadisticas */
 .metric-caption,
 .subtle,
 small {
     color: var(--text-subtle);
 }
 
+/* mensajes de estado */
 .notice-ok, .notice-error, .empty-state {
     padding: 14px 16px;
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
 }
 
+/* mensajes de estado */
 .notice-ok { border-left: 3px solid var(--color-ok); }
+/* mensajes de estado */
 .notice-error { border-left: 3px solid var(--color-error); }
 
+/* estilos de tablas */
 .table-wrap {
     width: 100%;
     overflow-x: auto;
@@ -68,33 +90,48 @@ small {
     border-radius: 14px;
 }
 
+/* estilos de tablas */
 table { width: 100%; border-collapse: collapse; background: var(--panel-bg-strong); }
+/* estilos de tablas */
 th, td { padding: 14px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+/* estilos de tablas */
 thead th { background: var(--panel-head); color: var(--text); font-size: 0.84rem; letter-spacing: 0.04em; text-transform: uppercase; }
+/* estilos de tablas */
 tbody tr:last-child td { border-bottom: 0; }
+/* estilos de tablas */
 tbody tr:hover td { color: var(--text); background: rgba(255, 255, 255, 0.02); }
 
+/* estilos de formularios */
 form.inline,
+/* estilos de formularios */
 .form-grid,
+/* estilos de formularios */
 .field,
 .list-simple,
 .stack {
     display: grid;
 }
 
+/* estilos de formularios */
 form.inline,
+/* estilos de formularios */
 .form-grid { gap: 12px; }
+/* estilos de formularios */
 form.inline { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: end; }
+/* estilos de formularios */
 .form-grid.two-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* estilos de formularios */
 .field { gap: 7px; }
 .stack { gap: 18px; }
 
+/* estilos de formularios */
 input, select, textarea, .btn, button, .btn-logout {
     min-height: 44px;
     color: var(--text);
     transition: border-color var(--transition), background-color var(--transition), box-shadow var(--transition), transform var(--transition), color var(--transition);
 }
 
+/* estilos de formularios */
 input, select, textarea {
     width: 100%;
     padding: 11px 13px;
@@ -103,8 +140,11 @@ input, select, textarea {
     border-radius: var(--radius-sm);
 }
 
+/* estilos de formularios */
 textarea { min-height: 120px; resize: vertical; }
+/* estilos de formularios */
 input::placeholder, textarea::placeholder { color: #767676; }
+/* estilos de formularios */
 input:focus, select:focus, textarea:focus {
     outline: 0;
     background: var(--panel-bg-strong);
@@ -112,6 +152,7 @@ input:focus, select:focus, textarea:focus {
     box-shadow: 0 0 0 2px rgba(192, 88, 4, 0.1);
 }
 
+/* estilos de botones */
 .btn, button, .btn-logout {
     width: auto;
     justify-content: center;
@@ -122,14 +163,18 @@ input:focus, select:focus, textarea:focus {
     font-weight: 700;
 }
 
+/* estilos de botones */
 .btn:hover, button:hover, .btn-logout:hover {
     color: var(--text);
     border-color: rgba(192, 88, 4, 0.36);
     transform: translateY(-1px);
 }
 
+/* estilos de botones */
 .btn-primary, button[type="submit"], .btn-logout { background: var(--color-accent); border-color: rgba(199, 103, 25, 0.6); }
+/* estilos de botones */
 .btn-primary:hover, button[type="submit"]:hover, .btn-logout:hover { background: var(--color-accent-hover); }
+/* estilos de botones */
 .btn-secondary { background: transparent; }
 
 .badge, .status-pill {
@@ -155,6 +200,7 @@ input:focus, select:focus, textarea:focus {
 
 .list-simple strong { display: block; margin-bottom: 2px; color: var(--text); }
 
+/* acciones y accesos rapidos */
 .toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -162,6 +208,7 @@ input:focus, select:focus, textarea:focus {
     align-items: end;
 }
 
+/* acciones y accesos rapidos */
 .toolbar .field {
     min-width: 180px;
     flex: 1 1 180px;
@@ -235,18 +282,27 @@ input:focus, select:focus, textarea:focus {
 .modal-meta { gap: 6px; }
 .modal-actions { justify-content: flex-end; gap: 10px; margin-top: 18px; }
 
+/* media query para movil */
 @media (max-width: 920px) {
+/* estilos de formularios */
     .form-grid.two-columns { grid-template-columns: 1fr; }
 }
 
+/* media query para movil */
 @media (max-width: 640px) {
+/* tarjetas y paneles */
     .card,
+/* estilos de tablas */
     th,
+/* estilos de tablas */
     td {
         padding: 14px;
     }
 
+/* acciones y accesos rapidos */
     .toolbar { flex-direction: column; align-items: stretch; }
+/* acciones y accesos rapidos */
     .toolbar .field { width: 100%; min-width: 0; }
     .pagination { align-items: flex-start; }
 }
+

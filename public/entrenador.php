@@ -1,17 +1,24 @@
-<?php
+﻿<?php
+// panel principal del entrenador
+// inicio de sesion
 session_start();
+// carga de archivos necesarios
 require_once __DIR__ . "/../config/conexion.php";
 
+// proteccion de acceso segun rol
 if (!isset($_SESSION["id_usuario"]) || !isset($_SESSION["email"]) || $_SESSION["rol"] !== "entrenador") {
+// redireccion final
     header("Location: login.php");
     exit;
 }
 
 $id_entrenador = (int) $_SESSION["id_usuario"];
 $mis_clases = [];
+// mensajes segun el resultado
 $error_clases = false;
 $total_asistentes = 0;
 
+// consulta sql
 $sql = "SELECT c.id_clase,
                c.nombre,
                c.descripcion,
@@ -24,13 +31,17 @@ $sql = "SELECT c.id_clase,
         GROUP BY c.id_clase, c.nombre, c.descripcion, c.fecha, c.capacidad
         ORDER BY c.fecha ASC";
 
+// preparacion de la consulta
 $stmt = $conexion->prepare($sql);
 
+// comprobacion de la consulta
 if ($stmt) {
     $stmt->bind_param("i", $id_entrenador);
+// ejecucion de la consulta
     $stmt->execute();
     $resultado = $stmt->get_result();
 
+// lectura de resultados
     while ($fila = $resultado->fetch_assoc()) {
         $mis_clases[] = $fila;
         $total_asistentes += (int) ($fila["total_asistentes"] ?? 0);
@@ -38,23 +49,35 @@ if ($stmt) {
 
     $stmt->close();
 } else {
+// mensajes segun el resultado
     $error_clases = true;
 }
 
+// mensajes segun el resultado
 $mensaje_exito = "";
+// mensajes segun el resultado
 $mensaje_error = "";
 
+// recogida de parametros de la url
 if (isset($_GET["ok"])) {
+// recogida de parametros de la url
     if ($_GET["ok"] === "creada") {
+// mensajes segun el resultado
         $mensaje_exito = "Clase creada correctamente.";
+// recogida de parametros de la url
     } elseif ($_GET["ok"] === "actualizada") {
+// mensajes segun el resultado
         $mensaje_exito = "Clase actualizada correctamente.";
+// recogida de parametros de la url
     } elseif ($_GET["ok"] === "eliminada") {
+// mensajes segun el resultado
         $mensaje_exito = "Clase eliminada correctamente.";
     }
 }
 
+// recogida de parametros de la url
 if (isset($_GET["error"])) {
+// mensajes segun el resultado
     $mensaje_error = "No se pudo completar la operacion.";
 }
 ?>
@@ -73,16 +96,19 @@ if (isset($_GET["error"])) {
 
 <?php include __DIR__ . "/includes/topbar.php"; ?>
 
+<!-- estructura principal del panel -->
 <div class="dashboard-layout">
     <?php include __DIR__ . "/includes/sidebar_entrenador.php"; ?>
 
+<!-- contenido principal -->
     <main class="dashboard-main">
         <div class="page-shell">
+<!-- cabecera del contenido -->
             <div class="page-header">
                 <div>
                     <span class="eyebrow">Panel entrenador</span>
                     <h2>Gestion de clases</h2>
-                    <p>Organiza tus sesiones, revisa el volumen de asistentes y mantén tus clases ordenadas desde un unico panel.</p>
+                    <p>Organiza tus sesiones, revisa el volumen de asistentes y mantÃ©n tus clases ordenadas desde un unico panel.</p>
                 </div>
             </div>
 
@@ -94,12 +120,15 @@ if (isset($_GET["error"])) {
                 <p class="notice-error"><?php echo htmlspecialchars($mensaje_error); ?></p>
             <?php endif; ?>
 
+<!-- bloque de estadisticas -->
             <section class="stats-grid">
+<!-- tarjeta de estadisticas -->
                 <article class="card card-kpi">
                     <span class="eyebrow">Clases</span>
                     <strong class="metric-value"><?php echo count($mis_clases); ?></strong>
                     <span class="metric-caption">Sesiones asignadas actualmente.</span>
                 </article>
+<!-- tarjeta de estadisticas -->
                 <article class="card card-kpi">
                     <span class="eyebrow">Asistentes</span>
                     <strong class="metric-value"><?php echo $total_asistentes; ?></strong>
@@ -107,8 +136,11 @@ if (isset($_GET["error"])) {
                 </article>
             </section>
 
+<!-- bloques de resumen -->
             <section class="split-grid trainer-split">
+<!-- tarjeta de contenido -->
                 <article class="card" id="crear-clase">
+<!-- cabecera del bloque -->
                     <div class="panel-header">
                         <div>
                             <span class="eyebrow">Gestion</span>
@@ -117,6 +149,7 @@ if (isset($_GET["error"])) {
                         </div>
                     </div>
 
+<!-- formulario principal -->
                     <form action="../app/controllers/crear_clase.php" method="POST" class="form-grid two-columns">
                         <div class="field">
                             <label for="nombre">Nombre</label>
@@ -144,7 +177,9 @@ if (isset($_GET["error"])) {
                     </form>
                 </article>
 
+<!-- tarjeta de contenido -->
                 <article class="card trainer-summary-card">
+<!-- cabecera del bloque -->
                     <div class="panel-header">
                         <div>
                             <span class="eyebrow">Control</span>
@@ -170,7 +205,9 @@ if (isset($_GET["error"])) {
                 </article>
             </section>
 
+<!-- seccion de clases -->
             <section class="card" id="mis-clases">
+<!-- cabecera del bloque -->
                 <div class="panel-header">
                     <div>
                         <span class="eyebrow">Tus clases</span>
@@ -184,8 +221,11 @@ if (isset($_GET["error"])) {
                 <?php elseif (empty($mis_clases)): ?>
                     <div class="empty-state">No tienes clases asignadas actualmente.</div>
                 <?php else: ?>
+<!-- contenedor de la tabla -->
                     <div class="table-wrap">
+<!-- tabla de datos -->
                         <table>
+<!-- cabecera de la tabla -->
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
@@ -196,6 +236,7 @@ if (isset($_GET["error"])) {
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
+<!-- contenido de la tabla -->
                             <tbody>
                                 <?php foreach ($mis_clases as $clase): ?>
                                     <tr>
@@ -207,6 +248,7 @@ if (isset($_GET["error"])) {
                                         <td>
                                             <div class="table-actions">
                                                 <a href="editar_clase.php?id_clase=<?php echo (int) ($clase["id_clase"] ?? 0); ?>" class="btn btn-secondary">Editar</a>
+<!-- formulario principal -->
                                                 <form action="../app/controllers/eliminar_clase.php" method="POST" class="inline-actions">
                                                     <input type="hidden" name="id_clase" value="<?php echo (int) ($clase["id_clase"] ?? 0); ?>">
                                                     <button type="submit">Eliminar</button>
@@ -226,3 +268,4 @@ if (isset($_GET["error"])) {
 
 </body>
 </html>
+

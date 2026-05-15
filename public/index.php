@@ -1,13 +1,18 @@
-﻿<!DOCTYPE html>
+﻿<?php // pagina principal de la web ?>
+<!DOCTYPE html>
 <?php
+// recogida de parametros de la url
 $estado_sugerencia = (string) ($_GET["sugerencia"] ?? "");
+// mensajes segun el resultado
 $mensaje_sugerencia = "";
 $clase_mensaje_sugerencia = "mensaje-exito oculto";
 
 if ($estado_sugerencia === "ok") {
+// mensajes segun el resultado
   $mensaje_sugerencia = "Mensaje enviado correctamente";
   $clase_mensaje_sugerencia = "mensaje-exito";
 } elseif ($estado_sugerencia === "error") {
+// mensajes segun el resultado
   $mensaje_sugerencia = "No se pudo enviar el mensaje. Revisa los campos obligatorios.";
   $clase_mensaje_sugerencia = "mensaje-exito error";
 }
@@ -20,6 +25,7 @@ if ($estado_sugerencia === "ok") {
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+<!-- cabecera de la pagina -->
   <header class="navbar">
     <div class="nav-left">
       <a href="index.php" class="logo-link">
@@ -41,6 +47,7 @@ if ($estado_sugerencia === "ok") {
     </button>
 
     <div class="nav-menu" id="nav-menu">
+<!-- menu principal -->
       <nav class="nav-center">
         <a href="#inicio">Inicio</a>
         <a href="#planes">Planes</a>
@@ -54,6 +61,7 @@ if ($estado_sugerencia === "ok") {
     </div>
   </header>
 
+<!-- seccion de contenido -->
   <section class="inicio-video" id="inicio">
     <video autoplay muted loop class="video-fondo">
       <source src="assets/video/gym.mp4" type="video/mp4">
@@ -75,6 +83,7 @@ if ($estado_sugerencia === "ok") {
     </div>
   </section>
 
+<!-- seccion de planes -->
   <section class="contenedor" id="planes">
     <h1>Planes y precios</h1>
 
@@ -164,6 +173,7 @@ if ($estado_sugerencia === "ok") {
     </div>
   </section>
 
+<!-- seccion de clases -->
   <section class="clases" id="clases">
     <h1>Nuestras clases</h1>
     <br>
@@ -238,6 +248,7 @@ if ($estado_sugerencia === "ok") {
     </div>
   </section>
 
+<!-- seccion de instalaciones -->
   <section class="instalaciones">
     <div class="instalaciones-contenido">
       <h1>Nuestras instalaciones</h1>
@@ -291,6 +302,7 @@ if ($estado_sugerencia === "ok") {
     </div>
   </section>
 
+<!-- seccion de contacto -->
   <section class="contacto" id="contacto">
     <div class="contacto-contenido">
       <h1>Contáctanos</h1>
@@ -298,6 +310,7 @@ if ($estado_sugerencia === "ok") {
       <br>
 
       <div class="contacto-grid">
+<!-- formulario principal -->
         <form class="formulario" id="formulario-contacto" action="../app/controllers/enviar_sugerencia.php" method="POST">
           <div class="fila">
             <input type="text" name="nombre" placeholder="Nombre completo *" required>
@@ -336,3 +349,4 @@ if ($estado_sugerencia === "ok") {
   <script src="assets/js/index.js"></script>
 </body>
 </html>
+

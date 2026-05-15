@@ -1,3 +1,5 @@
+﻿/* estilos de la portada principal */
+/* estilos del navbar */
 .navbar {
     background-color: #242423;
     color: white;
@@ -12,6 +14,7 @@
     z-index: 30;
 }
 
+/* estilos del navbar */
 .nav-left {
     display: flex;
     align-items: center;
@@ -28,6 +31,7 @@
     transform: scale(1.1);
 }
 
+/* estilos del navbar */
 .nav-menu {
     display: flex;
     align-items: center;
@@ -36,6 +40,7 @@
     min-width: 0;
 }
 
+/* estilos del navbar */
 .nav-center {
     display: flex;
     gap: 30px;
@@ -44,12 +49,14 @@
     min-width: 0;
 }
 
+/* estilos del navbar */
 .nav-right {
     display: flex;
     justify-content: flex-end;
     flex: 0 0 auto;
 }
 
+/* estilos del navbar */
 .nav-center a {
     color: #ffffff;
     text-decoration: none;
@@ -58,11 +65,13 @@
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
+/* estilos del navbar */
 .nav-center a:hover {
     color: #c05804;
     transform: scale(1.1);
 }
 
+/* estilos del navbar */
 .nav-right .login-btn {
     display: inline-flex;
     align-items: center;
@@ -76,10 +85,12 @@
     font-weight: 700;
 }
 
+/* estilos del navbar */
 .nav-right .login-btn:hover {
     background: #6c6c6c;
 }
 
+/* estilos del navbar */
 .nav-toggle {
     display: none;
     width: 42px;
@@ -93,17 +104,20 @@
     transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
 }
 
+/* estilos del navbar */
 .nav-toggle:hover {
     border-color: rgba(192, 88, 4, 0.28);
     background: rgba(255, 255, 255, 0.05);
 }
 
+/* estilos del navbar */
 .nav-toggle:focus-visible {
     outline: none;
     border-color: rgba(192, 88, 4, 0.42);
     box-shadow: 0 0 0 3px rgba(192, 88, 4, 0.12);
 }
 
+/* estilos del navbar */
 .nav-toggle span {
     display: block;
     width: 18px;
@@ -115,18 +129,22 @@
     transition: transform 0.25s ease, opacity 0.2s ease, background-color 0.25s ease;
 }
 
+/* estilos del navbar */
 .nav-toggle.is-open span:nth-child(1) {
     transform: translateY(5px) rotate(45deg);
 }
 
+/* estilos del navbar */
 .nav-toggle.is-open span:nth-child(2) {
     opacity: 0;
 }
 
+/* estilos del navbar */
 .nav-toggle.is-open span:nth-child(3) {
     transform: translateY(-5px) rotate(-45deg);
 }
 
+/* portada principal */
 .inicio-video {
     position: relative;
     width: 100%;
@@ -134,12 +152,14 @@
     overflow: hidden;
 }
 
+/* portada principal */
 .video-fondo {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
+/* portada principal */
 .caja-inicio {
     position: absolute;
     top: 50%;
@@ -154,12 +174,14 @@
     border: 1px solid orange;
 }
 
+/* portada principal */
 .caja-inicio h1 {
     font-size: clamp(2.3rem, 4vw, 3.25rem);
     line-height: 1.05;
     margin-bottom: 20px;
 }
 
+/* portada principal */
 .caja-inicio p {
     color: #ddd;
     margin-bottom: 30px;
@@ -172,6 +194,7 @@
     justify-content: center;
 }
 
+/* estilos de botones */
 .btn-principal {
     padding: 12px 20px;
     text-decoration: none;
@@ -181,34 +204,43 @@
     font-weight: 700;
 }
 
+/* estilos de botones */
 .btn-principal:hover {
     background: #6c6c6c;
 }
 
+/* media query para movil */
 @media (max-width: 1024px) {
+/* estilos del navbar */
     .navbar {
         padding: 8px 24px;
     }
 
+/* estilos del navbar */
     .nav-menu {
         gap: 18px;
     }
 
+/* estilos del navbar */
     .nav-center {
         gap: 22px;
     }
 
+/* portada principal */
     .caja-inicio {
         width: min(100% - 48px, 600px);
         padding: 36px;
     }
 }
 
+/* media query para movil */
 @media (max-width: 768px) {
+/* estilos del navbar */
     .navbar {
         padding: 10px 18px;
     }
 
+/* estilos del navbar */
     .nav-toggle {
         display: inline-flex;
         align-items: center;
@@ -216,6 +248,7 @@
         flex-shrink: 0;
     }
 
+/* estilos del navbar */
     .nav-menu {
         position: absolute;
         top: calc(100% + 10px);
@@ -235,12 +268,14 @@
         transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
+/* estilos del navbar */
     .nav-menu.is-open {
         opacity: 1;
         transform: translateY(0);
         pointer-events: auto;
     }
 
+/* estilos del navbar */
     .nav-center {
         display: grid;
         flex: initial;
@@ -248,27 +283,32 @@
         justify-items: center;
     }
 
+/* estilos del navbar */
     .nav-center a {
         width: 100%;
         text-align: center;
         font-size: 1rem;
     }
 
+/* estilos del navbar */
     .nav-right {
         display: grid;
         flex: initial;
     }
 
+/* estilos del navbar */
     .nav-right .login-btn {
         width: 100%;
         min-height: 46px;
     }
 
+/* portada principal */
     .inicio-video {
         height: auto;
         min-height: calc(100vh - 92px);
     }
 
+/* portada principal */
     .caja-inicio {
         position: relative;
         top: auto;
@@ -280,7 +320,9 @@
     }
 }
 
+/* media query para movil */
 @media (max-width: 640px) {
+/* estilos del navbar */
     .navbar {
         padding: 10px 16px;
     }
@@ -290,24 +332,28 @@
         height: 60px;
     }
 
+/* estilos del navbar */
     .nav-toggle {
         width: 40px;
         height: 40px;
         border-radius: 11px;
     }
 
+/* estilos del navbar */
     .nav-menu {
         left: 16px;
         right: 16px;
         padding: 20px 16px 16px;
     }
 
+/* portada principal */
     .caja-inicio {
         width: calc(100% - 32px);
         margin: 60px auto;
         padding: 26px 18px;
     }
 
+/* portada principal */
     .caja-inicio p {
         font-size: 0.96rem;
     }
@@ -316,7 +362,9 @@
         gap: 12px;
     }
 
+/* estilos de botones */
     .btn-principal {
         width: 100%;
     }
 }
+

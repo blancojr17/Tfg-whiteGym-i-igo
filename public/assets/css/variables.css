@@ -1,5 +1,7 @@
+﻿/* variables globales de estilos */
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
 
+/* variables principales */
 :root {
     --font-sans: "Manrope", "Segoe UI", Tahoma, Arial, sans-serif;
     --color-accent: #c05804;
@@ -40,3 +42,4 @@
     --z-topbar: 30;
     --z-modal: 60;
 }
+

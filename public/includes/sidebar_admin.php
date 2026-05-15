@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+// menu lateral del administrador
 $pagina_actual = basename($_SERVER["PHP_SELF"] ?? "");
 ?>
 <aside class="sidebar sidebar-admin">
@@ -7,6 +8,7 @@ $pagina_actual = basename($_SERVER["PHP_SELF"] ?? "");
         <h3 class="sidebar-title">Area admin</h3>
         <p class="sidebar-copy">Control general de usuarios, planes y clases.</p>
     </div>
+<!-- menu principal -->
     <nav>
         <a href="admin.php" class="<?php echo $pagina_actual === "admin.php" ? "active" : ""; ?>">Dashboard</a>
         <a href="admin_usuarios.php" class="<?php echo $pagina_actual === "admin_usuarios.php" ? "active" : ""; ?>">Usuarios</a>
@@ -15,3 +17,4 @@ $pagina_actual = basename($_SERVER["PHP_SELF"] ?? "");
         <a href="admin_sugerencias.php" class="<?php echo $pagina_actual === "admin_sugerencias.php" ? "active" : ""; ?>">Sugerencias</a>
     </nav>
 </aside>
+

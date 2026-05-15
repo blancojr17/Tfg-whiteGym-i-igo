@@ -1,3 +1,5 @@
+﻿/* estilos de la seccion de instalaciones */
+/* seccion de instalaciones */
 .instalaciones {
     width: 100%;
     background: #1a1a1a;
@@ -5,6 +7,7 @@
     color: #fff;
 }
 
+/* seccion de instalaciones */
 .instalaciones-contenido {
     max-width: 1200px;
     margin: auto;
@@ -12,15 +15,18 @@
     text-align: center;
 }
 
+/* seccion de instalaciones */
 .instalaciones h1 {
     margin-bottom: 10px;
 }
 
+/* seccion de instalaciones */
 .instalaciones .subtitulo {
     color: #aaa;
     margin-bottom: 40px;
 }
 
+/* seccion de instalaciones */
 .carrusel {
     position: relative;
     height: 420px;
@@ -28,6 +34,7 @@
     border-radius: 20px;
 }
 
+/* seccion de instalaciones */
 .carrusel1 {
     position: absolute;
     inset: 0;
@@ -39,11 +46,13 @@
     pointer-events: none;
 }
 
+/* seccion de instalaciones */
 .carrusel1.activo {
     opacity: 1;
     pointer-events: auto;
 }
 
+/* seccion de instalaciones */
 .carrusel1::before {
     content: "";
     position: absolute;
@@ -77,22 +86,29 @@
     margin-right: 8px;
 }
 
+/* media query para movil */
 @media (max-width: 1024px) {
+/* seccion de instalaciones */
     .instalaciones {
         padding: 60px 0;
     }
 }
 
+/* media query para movil */
 @media (max-width: 768px) {
+/* seccion de instalaciones */
     .instalaciones {
         padding: 46px 0;
     }
 
+/* seccion de instalaciones */
     .instalaciones-contenido {
         padding: 0 18px;
     }
 
+/* seccion de instalaciones */
     .carrusel,
+/* seccion de instalaciones */
     .carrusel1 {
         height: 360px;
     }
@@ -105,16 +121,21 @@
     }
 }
 
+/* media query para movil */
 @media (max-width: 640px) {
+/* seccion de instalaciones */
     .instalaciones {
         padding: 40px 0;
     }
 
+/* seccion de instalaciones */
     .instalaciones-contenido {
         padding: 0 16px;
     }
 
+/* seccion de instalaciones */
     .carrusel,
+/* seccion de instalaciones */
     .carrusel1 {
         height: 300px;
         border-radius: 16px;
@@ -130,3 +151,4 @@
         font-size: 13px;
     }
 }
+

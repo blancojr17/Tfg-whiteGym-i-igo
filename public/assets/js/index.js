@@ -1,4 +1,6 @@
+﻿// interacciones de la pagina principal
 document.addEventListener("DOMContentLoaded", () => {
+// elementos principales de la portada
     const btnMensual = document.getElementById("btn-mensual");
     const btnEntradas = document.getElementById("btn-entradas");
     const planesMensuales = document.getElementById("planes-mensuales");
@@ -8,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const navbarAnchors = document.querySelectorAll('.nav-center a[href^="#"], .logo-link[href^="#"]');
     const slides = document.querySelectorAll(".carrusel1");
 
+    // cambio entre planes mensuales y bonos
     function setPlanView(mode) {
         if (!btnMensual || !btnEntradas || !planesMensuales || !planesEntradas) {
             return;
@@ -25,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         planesEntradas.hidden = mostrarMensuales;
     }
 
+// eventos para cambiar de tipo de plan
     if (btnMensual && btnEntradas && planesMensuales && planesEntradas) {
         setPlanView("mensual");
 
@@ -37,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // cierre del menu responsive
     function closeMobileMenu() {
         if (!navToggle || !navMenu) {
             return;
@@ -47,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
         navToggle.setAttribute("aria-expanded", "false");
     }
 
+// comportamiento del menu en movil
     if (navToggle && navMenu) {
         navToggle.addEventListener("click", () => {
             const isOpen = navMenu.classList.toggle("is-open");
@@ -83,6 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // desplazamiento suave entre secciones
     function easeInOutCubic(t) {
         return t < 0.5
             ? 4 * t * t * t
@@ -109,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.requestAnimationFrame(step);
     }
 
+// enlaces del menu con scroll suave
     navbarAnchors.forEach((anchor) => {
         anchor.addEventListener("click", (event) => {
             const targetId = anchor.getAttribute("href");
@@ -133,6 +141,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // cambio automatico de imagenes del carrusel
+// carrusel automatico de instalaciones
     if (slides.length > 1) {
         let indiceActual = 0;
 
@@ -145,5 +155,3 @@ document.addEventListener("DOMContentLoaded", () => {
         window.setInterval(cambiarCarrusel, 3000);
     }
 });
-
-

@@ -1,0 +1,3 @@
+﻿1. Crear la base de datos gym_tfg en MySQL.
+2. Importar el archivo sql/gym_tfg.sql.
+3. Revisar config/conexion.php y comprobar host, puerto, usuario, contrasena y nombre de la base de datos.

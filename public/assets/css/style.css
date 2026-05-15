@@ -1,3 +1,5 @@
+﻿/* importacion de estilos de la pagina principal */
+/* carga de las secciones de la portada */
 @import url("./index-base.css");
 @import url("./index-landing.css");
 @import url("./index-planes.css");

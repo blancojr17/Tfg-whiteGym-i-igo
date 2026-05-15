@@ -1,4 +1,7 @@
+﻿<?php // filtros del listado de usuarios ?>
+<!-- bloque principal de contenido -->
 <section class="card">
+<!-- formulario principal -->
     <form method="GET" class="toolbar">
         <div class="field">
             <label for="q">Buscar</label>
@@ -19,3 +22,4 @@
         </div>
     </form>
 </section>
+

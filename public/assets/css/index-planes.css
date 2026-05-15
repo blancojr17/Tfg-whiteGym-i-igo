@@ -1,3 +1,5 @@
+﻿/* estilos de la seccion de planes */
+/* seccion de planes */
 .selector-planes {
     display: flex;
     justify-content: center;
@@ -8,6 +10,7 @@
     margin: 0 auto 50px;
 }
 
+/* seccion de planes */
 .boton-selector {
     background: transparent;
     color: #fff;
@@ -22,10 +25,12 @@
     display: none !important;
 }
 
+/* seccion de planes */
 .boton-selector.activo {
     background: #555;
 }
 
+/* seccion de planes */
 .planes {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 300px));
@@ -34,6 +39,7 @@
     align-items: stretch;
 }
 
+/* tarjetas y paneles */
 .tarjeta {
     background: #222;
     padding: 35px 30px;
@@ -64,11 +70,13 @@
     background: #6c6c6c;
 }
 
+/* tarjetas y paneles */
 .tarjeta h2 {
     margin: 0;
     color: #fff;
 }
 
+/* seccion de planes */
 .precio {
     font-size: 34px;
     margin: 25px 0;
@@ -76,11 +84,13 @@
     font-weight: 800;
 }
 
+/* seccion de planes */
 .precio span {
     font-size: 14px;
     color: #ccc;
 }
 
+/* tarjetas y paneles */
 .tarjeta ul {
     border-top: 1px solid #444;
     border-bottom: 1px solid #444;
@@ -88,6 +98,7 @@
     margin: 20px 0;
 }
 
+/* tarjetas y paneles */
 .tarjeta li {
     margin-bottom: 16px;
     font-size: 15px;
@@ -110,33 +121,41 @@
     border-radius: 20px;
 }
 
+/* media query para movil */
 @media (max-width: 1024px) {
+/* seccion de planes */
     .planes {
         grid-template-columns: repeat(2, minmax(0, 300px));
         gap: 24px;
     }
 
+/* tarjetas y paneles */
     .tarjeta {
         min-height: 500px;
     }
 }
 
+/* media query para movil */
 @media (max-width: 768px) {
+/* seccion de planes */
     .selector-planes {
         width: min(100%, 520px);
         margin-bottom: 32px;
     }
 
+/* seccion de planes */
     .boton-selector {
         flex: 1 1 0;
         padding: 12px 18px;
     }
 
+/* seccion de planes */
     .planes {
         grid-template-columns: minmax(0, 1fr);
         gap: 20px;
     }
 
+/* tarjetas y paneles */
     .tarjeta {
         max-width: 520px;
         margin: 0 auto;
@@ -145,20 +164,25 @@
     }
 }
 
+/* media query para movil */
 @media (max-width: 640px) {
+/* seccion de planes */
     .selector-planes {
         padding: 5px;
     }
 
+/* seccion de planes */
     .boton-selector {
         padding: 11px 12px;
         font-size: 0.9rem;
     }
 
+/* tarjetas y paneles */
     .tarjeta {
         padding: 28px 18px 22px;
     }
 
+/* seccion de planes */
     .precio {
         font-size: 2rem;
         margin: 20px 0;
@@ -168,3 +192,4 @@
         margin-top: 22px;
     }
 }
+

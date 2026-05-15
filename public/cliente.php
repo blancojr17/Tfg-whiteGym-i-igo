@@ -1,8 +1,13 @@
-<?php
+﻿<?php
+// panel principal del usuario
+// inicio de sesion
 session_start();
+// carga de archivos necesarios
 require_once __DIR__ . "/../config/conexion.php";
 
+// proteccion de acceso segun rol
 if (!isset($_SESSION["id_usuario"]) || !isset($_SESSION["email"]) || $_SESSION["rol"] !== "usuario") {
+// redireccion final
     header("Location: login.php");
     exit;
 }
@@ -12,6 +17,7 @@ $plan_activo = null;
 $reservas_totales = 0;
 $proximas_clases = [];
 
+// consulta sql
 $sql = "SELECT up.id_usuario_plan, up.id_plan, p.nombre, p.tipo, up.fecha_fin, up.usos_restantes
         FROM usuarios_planes up
         INNER JOIN planes p ON up.id_plan = p.id_plan
@@ -24,37 +30,51 @@ $sql = "SELECT up.id_usuario_plan, up.id_plan, p.nombre, p.tipo, up.fecha_fin, u
         ORDER BY up.fecha_inicio DESC, up.id_usuario_plan DESC
         LIMIT 1";
 
+// preparacion de la consulta
 $stmt = $conexion->prepare($sql);
+// comprobacion de la consulta
 if ($stmt) {
     $stmt->bind_param("i", $id_usuario);
+// ejecucion de la consulta
     $stmt->execute();
     $resultado = $stmt->get_result();
+// lectura de resultados
     $plan_activo = $resultado ? $resultado->fetch_assoc() : null;
     $stmt->close();
 }
 
+// consulta sql
 $sqlReservas = "SELECT COUNT(*) AS total FROM usuarios_clases WHERE id_usuario = ?";
+// preparacion de la consulta
 $stmtReservas = $conexion->prepare($sqlReservas);
+// comprobacion de la consulta
 if ($stmtReservas) {
     $stmtReservas->bind_param("i", $id_usuario);
+// ejecucion de la consulta
     $stmtReservas->execute();
     $resReservas = $stmtReservas->get_result();
+// lectura de resultados
     $filaReservas = $resReservas ? $resReservas->fetch_assoc() : null;
     $reservas_totales = (int) ($filaReservas["total"] ?? 0);
     $stmtReservas->close();
 }
 
+// consulta sql
 $sqlProximas = "SELECT c.nombre, c.fecha
                 FROM usuarios_clases uc
                 INNER JOIN clases c ON uc.id_clase = c.id_clase
                 WHERE uc.id_usuario = ? AND c.fecha >= NOW()
                 ORDER BY c.fecha ASC
                 LIMIT 4";
+// preparacion de la consulta
 $stmtProximas = $conexion->prepare($sqlProximas);
+// comprobacion de la consulta
 if ($stmtProximas) {
     $stmtProximas->bind_param("i", $id_usuario);
+// ejecucion de la consulta
     $stmtProximas->execute();
     $resProximas = $stmtProximas->get_result();
+// lectura de resultados
     while ($fila = $resProximas->fetch_assoc()) {
         $proximas_clases[] = $fila;
     }
@@ -76,11 +96,14 @@ if ($stmtProximas) {
 
 <?php include __DIR__ . "/includes/topbar.php"; ?>
 
+<!-- estructura principal del panel -->
 <div class="dashboard-layout">
     <?php include __DIR__ . "/includes/sidebar_cliente.php"; ?>
 
+<!-- contenido principal -->
     <main class="dashboard-main">
         <div class="page-shell">
+<!-- cabecera del contenido -->
             <div class="page-header">
                 <div>
                     <span class="eyebrow">Panel cliente</span>
@@ -93,25 +116,30 @@ if ($stmtProximas) {
                 </div>
             </div>
 
+<!-- bloque de estadisticas -->
             <section class="stats-grid">
+<!-- tarjeta de estadisticas -->
                 <article class="card card-kpi">
                     <span class="eyebrow">Plan actual</span>
                     <strong class="metric-value"><?php echo htmlspecialchars($plan_activo["nombre"] ?? "Sin plan"); ?></strong>
                     <span class="metric-caption"><?php echo $plan_activo ? "Tu plan activo en este momento." : "Aun no tienes un plan contratado."; ?></span>
                 </article>
 
+<!-- tarjeta de estadisticas -->
                 <article class="card card-kpi">
                     <span class="eyebrow">Modalidad</span>
                     <strong class="metric-value"><?php echo htmlspecialchars($plan_activo["tipo"] ?? "Pendiente"); ?></strong>
                     <span class="metric-caption">Suscripcion o bono segun tu contratacion.</span>
                 </article>
 
+<!-- tarjeta de estadisticas -->
                 <article class="card card-kpi">
                     <span class="eyebrow">Reservas</span>
                     <strong class="metric-value"><?php echo $reservas_totales; ?></strong>
                     <span class="metric-caption">Clases reservadas desde tu cuenta.</span>
                 </article>
 
+<!-- tarjeta de estadisticas -->
                 <article class="card card-kpi">
                     <span class="eyebrow">Usos restantes</span>
                     <strong class="metric-value"><?php echo isset($plan_activo["usos_restantes"]) ? (int) $plan_activo["usos_restantes"] : "-"; ?></strong>
@@ -119,8 +147,11 @@ if ($stmtProximas) {
                 </article>
             </section>
 
+<!-- bloques de resumen -->
             <section class="split-grid">
+<!-- tarjeta de contenido -->
                 <article class="card">
+<!-- cabecera del bloque -->
                     <div class="panel-header">
                         <div>
                             <h3>Estado de tu plan</h3>
@@ -149,13 +180,16 @@ if ($stmtProximas) {
                     <?php endif; ?>
                 </article>
 
+<!-- tarjeta de contenido -->
                 <article class="card">
+<!-- cabecera del bloque -->
                     <div class="panel-header">
                         <div>
                             <h3>Accesos rapidos</h3>
                             <p>Movimientos frecuentes dentro del portal.</p>
                         </div>
                     </div>
+<!-- accesos rapidos -->
                     <div class="quick-links">
                         <a href="mi_cuerpo.php" class="btn btn-secondary">Actualizar medidas</a>
                         <a href="mis_clases.php" class="btn btn-secondary">Ver mis clases</a>
@@ -164,7 +198,9 @@ if ($stmtProximas) {
                 </article>
             </section>
 
+<!-- bloque principal de contenido -->
             <section class="card">
+<!-- cabecera del bloque -->
                 <div class="panel-header">
                     <div>
                         <h3>Proximas clases</h3>
@@ -176,6 +212,7 @@ if ($stmtProximas) {
                 <?php if (empty($proximas_clases)): ?>
                     <div class="empty-state">Aun no tienes clases proximas reservadas.</div>
                 <?php else: ?>
+<!-- listado rapido de datos -->
                     <ul class="list-simple">
                         <?php foreach ($proximas_clases as $clase): ?>
                             <li>
@@ -192,3 +229,4 @@ if ($stmtProximas) {
 
 </body>
 </html>
+

@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+// funciones de apoyo para calculos fitness
 
 function fitness_activity_options(): array
 {
@@ -91,3 +92,4 @@ function calculate_fitness(array $datos): array
         "grasas" => $grasas
     ];
 }
+
